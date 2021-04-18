@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["OpenMind/OpenMind.csproj", "OpenMind/"]
-RUN dotnet restore "OpenMind/OpenMind.csproj"
+COPY ["OpenMind.csproj", "."]
+RUN dotnet tool install --global dotnet-ef
+RUN dotnet restore "OpenMind.csproj"
 COPY . .
-WORKDIR "/src/OpenMind"
 RUN dotnet build "OpenMind.csproj" -c Release -o /app/build
 
 FROM build AS publish

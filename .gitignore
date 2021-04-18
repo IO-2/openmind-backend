@@ -35,3 +35,5 @@ Desktop.ini
 
 # Configs
 appsettings.*
+init.sql
+docker-compose.yml
