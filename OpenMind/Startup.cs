@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +24,7 @@ using OpenMind.Data;
 using OpenMind.Models;
 using OpenMind.Options;
 using OpenMind.Services;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OpenMind
 {
@@ -42,26 +46,27 @@ namespace OpenMind
             services.AddSingleton(jwtOptions);
             
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISectionService, SectionService>();
             
             services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        RequireExpirationTime = false,
-                        ValidateLifetime = true
-                    };
-                });
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = false,
+                    ValidateLifetime = true
+                };
+            });
             
             services.AddDbContext<DataContext>(x =>
             {
@@ -72,12 +77,44 @@ namespace OpenMind
             services.AddIdentity<UserModel, IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
 
-            
             services.AddControllers();
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = new HeaderApiVersionReader("version");
+            });
+            
             services.AddSwaggerGen(c =>
             {
+                var swaggerOptions = new SwaggerOptions();
+                Configuration.GetSection("Swagger").Bind(swaggerOptions);
+            
+                foreach (var currentVersion in swaggerOptions.Versions)
+                {
+                    c.SwaggerDoc(currentVersion.Name, new OpenApiInfo
+                    {
+                        Title = swaggerOptions.Title,
+                        Version = currentVersion.Name,
+                        Description = swaggerOptions.Description
+                    });
+                }
+
+                c.DocInclusionPredicate((version, desc) =>
+                {
+                    if (!desc.TryGetMethodInfo(out MethodInfo methodInfo))
+                    {
+                        return false;
+                    }
+                    var versions = methodInfo.DeclaringType.GetConstructors()
+                        .SelectMany(constructorInfo => constructorInfo.DeclaringType.CustomAttributes
+                            .Where(attributeData => attributeData.AttributeType == typeof(ApiVersionAttribute))
+                            .SelectMany(attributeData => attributeData.ConstructorArguments
+                                .Select(attributeTypedArgument => attributeTypedArgument.Value)));
+
+                    return versions.Any(v => $"{v}" == version);
+                });
+                
                 c.EnableAnnotations();
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "OpenMind", Version = "v1"});
                 
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
@@ -120,8 +157,18 @@ namespace OpenMind
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenMind v1"));
+                
+                var swaggerOptions = new SwaggerOptions();
+                Configuration.GetSection("Swagger").Bind(swaggerOptions);
+                
+                app.UseSwagger(option => option.RouteTemplate = swaggerOptions.JsonRoute);
+                app.UseSwaggerUI(option =>
+                {
+                    foreach (var currentVersion in swaggerOptions.Versions)
+                    {
+                        option.SwaggerEndpoint(currentVersion.UiEndpoint, $"{swaggerOptions.Title} {currentVersion.Name}");
+                    }
+                });
             }
 
             app.UseRouting();
@@ -132,6 +179,8 @@ namespace OpenMind
             });
 
             app.UseAuthorization();
+
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
