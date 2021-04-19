@@ -10,7 +10,7 @@ using OpenMind.Data;
 namespace OpenMind.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210419094907_init")]
+    [Migration("20210419233212_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +158,13 @@ namespace OpenMind.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("Locale")
+                        .HasColumnType("text");
+
                     b.Property<string>("MediaUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

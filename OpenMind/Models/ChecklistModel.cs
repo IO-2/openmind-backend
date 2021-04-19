@@ -1,6 +1,6 @@
 namespace OpenMind.Models
 {
-    public class ChecklistModel
+    public class ChecklistModel : Localizable
     {
         public int Id { get; set; }
         public string Title { get; set; }

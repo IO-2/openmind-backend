@@ -4,58 +4,64 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using OpenMind.Contracts;
+using OpenMind.Contracts.Responses;
+using OpenMind.Domain;
+using OpenMind.Services;
 
 namespace OpenMind.Controllers
 {
     [ApiVersion("1.0")]
     public class ChecklistController : MyControllerBase
     {
-        private readonly IWebHostEnvironment _environment;
+        private readonly IChecklistService _checklistService;
         
-        public ChecklistController(IWebHostEnvironment environment)
+        public ChecklistController(IChecklistService checklistService)
         {
-            this._environment = environment;
+            this._checklistService = checklistService;
         }
         
         [HttpGet("get")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] ActionWithIdContract contract)
         {
-            return Ok("Hello, world!");
+            var result = await _checklistService.GetInfo(contract.Id);
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok((result as ChecklistActionResult).Checklist);
+        }
+        
+        [HttpDelete("delete")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> Delete(ActionWithIdContract contract)
+        {
+            var result = await _checklistService.Delete(contract.Id);
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(true);
         }
 
         [HttpPost("create")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Create([FromForm] ChecklistCreateContract contract)
         {
-            // TODO: NUll reference, cannot upload file with text
-            var file = contract.File;
-            try
-            {
-                if (file.Length > 0 && file.ContentType == "pdf")
-                {
-                    if (!Directory.Exists(_environment.WebRootPath + "\\Checklists\\"))
-                    {
-                        Directory.CreateDirectory(_environment.WebRootPath + "\\Checklists\\");
-                    }
+            var file = contract.File.FirstOrDefault();
+            var result = await _checklistService.Create(contract.Title, file, contract.Locale);
 
-                    // TODO: Hash name
-                    using (FileStream fileStream = System.IO.File.Create(_environment.WebRootPath + "\\Checklists\\" +
-                                                                         file.FileName))
-                    {
-                        await file.CopyToAsync(fileStream);
-                        await fileStream.FlushAsync();
-                        return Ok("\\Checklists\\" + file.FileName);
-                    }
-                }
-            }
-            catch (Exception ex)
+            if (!result.Success)
             {
-                return BadRequest(ex.Message.ToString());
+                return BadRequest(result.Errors);
             }
-            return BadRequest("File error");
+
+            return Ok();
         }
     }
 }

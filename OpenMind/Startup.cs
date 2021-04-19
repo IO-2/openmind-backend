@@ -47,6 +47,7 @@ namespace OpenMind
             
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISectionService, SectionService>();
+            services.AddScoped<IChecklistService, ChecklistService>();
             
             services.AddAuthentication(x =>
             {

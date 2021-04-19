@@ -26,6 +26,7 @@
       <Folder Include="Helpers" />
       <Folder Include="Migrations" />
       <Folder Include="www" />
+      <Folder Include="www\Checklists" />
     </ItemGroup>
 
 </Project>

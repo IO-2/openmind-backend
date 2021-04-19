@@ -61,7 +61,9 @@ namespace OpenMind.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MediaUrl = table.Column<string>(type: "text", nullable: true)
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    MediaUrl = table.Column<string>(type: "text", nullable: true),
+                    Locale = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
