@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace OpenMind.Models
@@ -12,7 +13,6 @@ namespace OpenMind.Models
         
         public string DreamingAbout { get; set; }
         public string Inspirer { get; set; }
-        public string WhyInspired { get; set; }
-        // TODO: More information tests, interests etc.
+        public string WhyInspired { get; set; } 
     }
 }

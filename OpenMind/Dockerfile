@@ -1,4 +1,8 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+
+# Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
