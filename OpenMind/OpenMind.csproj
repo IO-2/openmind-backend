@@ -25,8 +25,8 @@
       <Folder Include="Contracts\Requests" />
       <Folder Include="Helpers" />
       <Folder Include="Migrations" />
-      <Folder Include="www" />
-      <Folder Include="www\Checklists" />
+      <Folder Include="wwwroot" />
+      <Folder Include="wwwroot\Checklists" />
     </ItemGroup>
 
 </Project>

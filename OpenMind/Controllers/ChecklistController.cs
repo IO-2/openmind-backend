@@ -23,9 +23,9 @@ namespace OpenMind.Controllers
             this._checklistService = checklistService;
         }
         
-        [HttpGet("get")]
+        [HttpGet("get_info")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Get([FromQuery] ActionWithIdContract contract)
+        public async Task<IActionResult> GetInfo([FromQuery] ActionWithIdContract contract)
         {
             var result = await _checklistService.GetInfo(contract.Id);
             if (!result.Success)
@@ -34,6 +34,20 @@ namespace OpenMind.Controllers
             }
 
             return Ok((result as ChecklistActionResult).Checklist);
+        }
+        
+        [HttpGet("get_file")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetFile([FromQuery] ActionWithIdContract contract)
+        {
+            var result = await _checklistService.GetFile(contract.Id);
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            var fileResult = (result as FileActionResult);
+            return PhysicalFile(fileResult.FilePath, fileResult.FileType, fileResult.FileName);
         }
         
         [HttpDelete("delete")]
