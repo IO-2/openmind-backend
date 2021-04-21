@@ -10,7 +10,7 @@ using OpenMind.Data;
 namespace OpenMind.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210421120117_init")]
+    [Migration("20210421162232_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -194,15 +194,13 @@ namespace OpenMind.Migrations
                     b.Property<int>("PeoplePassedAmount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("SectionModelId")
+                    b.Property<int>("Section")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SectionModelId");
 
                     b.ToTable("Courses");
                 });
@@ -236,25 +234,24 @@ namespace OpenMind.Migrations
                     b.ToTable("CoursesPages");
                 });
 
-            modelBuilder.Entity("OpenMind.Models.InterestsModel", b =>
+            modelBuilder.Entity("OpenMind.Models.InterestModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("InterestNumber")
+                    b.Property<int>("Interest")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Locale")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("UserId")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Interests");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("InterestModel");
                 });
 
             modelBuilder.Entity("OpenMind.Models.LongreadModel", b =>
@@ -284,6 +281,7 @@ namespace OpenMind.Migrations
             modelBuilder.Entity("OpenMind.Models.RefreshTokenModel", b =>
                 {
                     b.Property<string>("Token")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreationDate")
@@ -309,49 +307,6 @@ namespace OpenMind.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
-                });
-
-            modelBuilder.Entity("OpenMind.Models.SectionModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Locale")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("SectionNumber")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sections");
-                });
-
-            modelBuilder.Entity("OpenMind.Models.UserInterestModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("InterestId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InterestId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersInterests");
                 });
 
             modelBuilder.Entity("OpenMind.Models.UserModel", b =>
@@ -455,7 +410,7 @@ namespace OpenMind.Migrations
                     b.Property<int>("CompletedAmount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SectionNumber")
+                    b.Property<int>("Section")
                         .HasColumnType("integer");
 
                     b.Property<string>("UserId")
@@ -519,15 +474,6 @@ namespace OpenMind.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OpenMind.Models.CourseModel", b =>
-                {
-                    b.HasOne("OpenMind.Models.SectionModel", "SectionModel")
-                        .WithMany()
-                        .HasForeignKey("SectionModelId");
-
-                    b.Navigation("SectionModel");
-                });
-
             modelBuilder.Entity("OpenMind.Models.CoursePageModel", b =>
                 {
                     b.HasOne("OpenMind.Models.CourseModel", "Course")
@@ -535,6 +481,15 @@ namespace OpenMind.Migrations
                         .HasForeignKey("CourseId");
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("OpenMind.Models.InterestModel", b =>
+                {
+                    b.HasOne("OpenMind.Models.UserModel", "User")
+                        .WithMany("Interests")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OpenMind.Models.RefreshTokenModel", b =>
@@ -546,21 +501,6 @@ namespace OpenMind.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("OpenMind.Models.UserInterestModel", b =>
-                {
-                    b.HasOne("OpenMind.Models.InterestsModel", "Interest")
-                        .WithMany()
-                        .HasForeignKey("InterestId");
-
-                    b.HasOne("OpenMind.Models.UserModel", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Interest");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("OpenMind.Models.UserProgressBySectionModel", b =>
                 {
                     b.HasOne("OpenMind.Models.UserModel", "User")
@@ -568,6 +508,11 @@ namespace OpenMind.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OpenMind.Models.UserModel", b =>
+                {
+                    b.Navigation("Interests");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,7 +11,7 @@ namespace OpenMind.Models
         public string ImageUrl { get; set; }
         public int PeoplePassedAmount { get; set; }
         
-        public virtual SectionModel SectionModel { get; set; }
+        public int Section { get; set; }
         
     }
 }

@@ -48,7 +48,6 @@ namespace OpenMind
             services.AddSingleton(jwtOptions);
             
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<IChecklistService, ChecklistService>();
             
             var tokenValidationParameters = new TokenValidationParameters

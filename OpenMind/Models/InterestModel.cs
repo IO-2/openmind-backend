@@ -1,9 +1,9 @@
 namespace OpenMind.Models
 {
-    public class UserInterestModel
+    public class InterestModel
     {
         public int Id { get; set; }
         public virtual UserModel User { get; set; }
-        public virtual InterestsModel Interest { get; set; }
+        public int Interest { get; set; }
     }
 }

@@ -1,16 +1,14 @@
-using System.Collections.Generic;
+using System;
 
-namespace OpenMind.Contracts.Requests
+namespace OpenMind.Contracts.Responses
 {
-    public class UserRegisterRequest
+    public class UserInfoResponse
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        
         public string DreamingAbout { get; set; }
         public string Inspirer { get; set; }
         public string WhyInspired { get; set; }
-        public ICollection<int> Interests { get; set; }
+        public DateTime SubscriptionEndDate { get; set; }
     }
 }

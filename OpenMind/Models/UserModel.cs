@@ -17,5 +17,6 @@ namespace OpenMind.Models
         public string WhyInspired { get; set; } 
         
         public DateTime SubscriptionEndDate { get; set; }
+        public virtual ICollection<InterestModel> Interests { get; set; }
     }
 }

@@ -1,12 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenMind.Contracts.Responses;
 using OpenMind.Data;
 using OpenMind.Domain;
 using OpenMind.Models;
@@ -21,16 +29,20 @@ namespace OpenMind.Services
         private readonly JwtOptions _jwtOptions;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context)
+        private readonly List<string> _allowedFiles = new List<string>{ "image/jpeg", "image/png", "image/jpg" }; 
+
+        public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment)
         {
             this._userManager = userManager;
             this._jwtOptions = jwtOptions;
             this._tokenValidationParameters = tokenValidationParameters;
             this._context = context;
+            this._environment = environment;
         }
 
-        public async Task<ServiceActionResult> Register(string email, string password, string dreamingAbout, string inspirer, string whyInspired)
+        public async Task<ServiceActionResult> Register(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -44,6 +56,7 @@ namespace OpenMind.Services
 
             var newUser = new UserModel
             {
+                FirstName = name,
                 Email = email,
                 UserName = email,
                 DreamingAbout = dreamingAbout,
@@ -143,6 +156,152 @@ namespace OpenMind.Services
 
             var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
             return await GenerateAuthenticationResultForUser(user);
+        }
+
+        public async Task<ServiceActionResult> DeleteAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new AuthActionResult
+                {
+                    Errors = new[] {"User does not exists"}
+                };
+            }
+
+            _context.Users.Remove(await _context.Users.SingleOrDefaultAsync(x => x.Email == email));
+            await _context.SaveChangesAsync();
+
+            return OkServiceActionResult();
+        }
+
+        public async Task<ServiceActionResult> GetInfo(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new AuthActionResult
+                {
+                    Errors = new[] {"User does not exists"}
+                };
+            }
+
+            return new UserInfoActionResult
+            {
+                Success = true,
+                User = new UserInfoResponse
+                {
+                    Name = user.FirstName,
+                    Email = user.Email,
+                    DreamingAbout = user.DreamingAbout,
+                    Inspirer = user.Inspirer,
+                    SubscriptionEndDate = user.SubscriptionEndDate,
+                    WhyInspired = user.WhyInspired
+                }
+            };
+        }
+
+        public async Task<ServiceActionResult> SetAvatarAsync(IFormFile file, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new ServiceActionResult
+                {
+                    Errors = new[] {"User does not exists"}
+                };
+            }
+            
+            try
+            {
+                if (file.Length > 0 && _allowedFiles.Contains(file.ContentType))
+                {
+                    var avatarPaths = Path.Combine(_environment.WebRootPath, "Avatars");
+                    if (!Directory.Exists(avatarPaths))
+                    {
+                        Directory.CreateDirectory(avatarPaths);
+                    }
+                    
+                    // TODO: Hash name
+                    var newFilename = user.Id + file.FileName;
+
+                    using (FileStream fileStream = System.IO.File.Create(Path.Combine(avatarPaths, newFilename)))
+                    {
+                        await file.CopyToAsync(fileStream);
+                        await fileStream.FlushAsync();
+                    }
+
+                    user.AvatarUrl = Path.Combine(avatarPaths, newFilename);
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                    return OkServiceActionResult();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadServiceActionResult(e.Message);
+            }
+            return BadServiceActionResult("File error");
+        }
+
+        public async Task<ServiceActionResult> IsEmailValid(string email)
+        {
+            try {
+                var addr = new System.Net.Mail.MailAddress(email);
+            }
+            catch {
+                return new EmailValidationResult
+                {
+                    Success = false,
+                    Reason = 1
+                };
+            }
+            
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                return new EmailValidationResult
+                {
+                    Success = false,
+                    Reason = 2
+                };
+            }
+
+            return OkServiceActionResult();
+        }
+
+        public async Task<ServiceActionResult> GetAvatarAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new ServiceActionResult
+                {
+                    Errors = new[] {"User does not exists"}
+                };
+            }
+
+            if (user.AvatarUrl.IsNullOrEmpty())
+            {
+                return new ServiceActionResult
+                {
+                    Errors = new[] {"No avatar"}
+                };
+            }
+            
+            return new FileActionResult
+            {
+                FileName = user.AvatarUrl.Substring(user.AvatarUrl.LastIndexOf("/") + 1),
+                FilePath = user.AvatarUrl,
+                FileType = "image/" + user.AvatarUrl.Substring(user.AvatarUrl.LastIndexOf(".") + 1),
+                Success = true
+            };
         }
 
         private async Task<AuthActionResult> GenerateAuthenticationResultForUser(UserModel newUser)

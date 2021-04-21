@@ -72,18 +72,22 @@ namespace OpenMind.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Interests",
+                name: "Courses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: true),
-                    InterestNumber = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    PageAmount = table.Column<int>(type: "integer", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true),
+                    PeoplePassedAmount = table.Column<int>(type: "integer", nullable: false),
+                    Section = table.Column<int>(type: "integer", nullable: false),
                     Locale = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Interests", x => x.Id);
+                    table.PrimaryKey("PK_Courses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,21 +104,6 @@ namespace OpenMind.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Longreads", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sections",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    SectionNumber = table.Column<int>(type: "integer", nullable: false),
-                    Locale = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sections", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -224,6 +213,26 @@ namespace OpenMind.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "InterestModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    Interest = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InterestModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InterestModel_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RefreshTokens",
                 columns: table => new
                 {
@@ -252,7 +261,7 @@ namespace OpenMind.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SectionNumber = table.Column<int>(type: "integer", nullable: false),
+                    Section = table.Column<int>(type: "integer", nullable: false),
                     CompletedAmount = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: true)
                 },
@@ -263,57 +272,6 @@ namespace OpenMind.Migrations
                         name: "FK_UsersProgressBySection_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UsersInterests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: true),
-                    InterestId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsersInterests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UsersInterests_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UsersInterests_Interests_InterestId",
-                        column: x => x.InterestId,
-                        principalTable: "Interests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Courses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    PageAmount = table.Column<int>(type: "integer", nullable: false),
-                    ImageUrl = table.Column<string>(type: "text", nullable: true),
-                    PeoplePassedAmount = table.Column<int>(type: "integer", nullable: false),
-                    SectionModelId = table.Column<int>(type: "integer", nullable: true),
-                    Locale = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Courses_Sections_SectionModelId",
-                        column: x => x.SectionModelId,
-                        principalTable: "Sections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -379,28 +337,18 @@ namespace OpenMind.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_SectionModelId",
-                table: "Courses",
-                column: "SectionModelId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CoursesPages_CourseId",
                 table: "CoursesPages",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
+                name: "IX_InterestModel_UserId",
+                table: "InterestModel",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsersInterests_InterestId",
-                table: "UsersInterests",
-                column: "InterestId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersInterests_UserId",
-                table: "UsersInterests",
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -433,13 +381,13 @@ namespace OpenMind.Migrations
                 name: "CoursesPages");
 
             migrationBuilder.DropTable(
+                name: "InterestModel");
+
+            migrationBuilder.DropTable(
                 name: "Longreads");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
-
-            migrationBuilder.DropTable(
-                name: "UsersInterests");
 
             migrationBuilder.DropTable(
                 name: "UsersProgressBySection");
@@ -451,13 +399,7 @@ namespace OpenMind.Migrations
                 name: "Courses");
 
             migrationBuilder.DropTable(
-                name: "Interests");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Sections");
         }
     }
 }
