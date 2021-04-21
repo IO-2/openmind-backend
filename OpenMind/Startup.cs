@@ -25,6 +25,7 @@ using OpenMind.Data;
 using OpenMind.Models;
 using OpenMind.Options;
 using OpenMind.Services;
+using OpenMind.Services.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OpenMind
@@ -46,9 +47,21 @@ namespace OpenMind
             
             services.AddSingleton(jwtOptions);
             
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<IChecklistService, ChecklistService>();
+            
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true
+            };
+
+            services.AddSingleton(tokenValidationParameters);
             
             services.AddAuthentication(x =>
             {
@@ -59,15 +72,7 @@ namespace OpenMind
             .AddJwtBearer(x =>
             {
                 x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireExpirationTime = false,
-                    ValidateLifetime = true
-                };
+                x.TokenValidationParameters = tokenValidationParameters;
             });
             
             services.AddDbContext<DataContext>(x =>

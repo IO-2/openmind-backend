@@ -10,7 +10,7 @@ using OpenMind.Data;
 namespace OpenMind.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210419233212_init")]
+    [Migration("20210421120117_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,6 +281,36 @@ namespace OpenMind.Migrations
                     b.ToTable("Longreads");
                 });
 
+            modelBuilder.Entity("OpenMind.Models.RefreshTokenModel", b =>
+                {
+                    b.Property<string>("Token")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("Invalidated")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("JwtId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Token");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("OpenMind.Models.SectionModel", b =>
                 {
                     b.Property<int>("Id")
@@ -389,6 +419,9 @@ namespace OpenMind.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("SubscriptionEndDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -502,6 +535,15 @@ namespace OpenMind.Migrations
                         .HasForeignKey("CourseId");
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("OpenMind.Models.RefreshTokenModel", b =>
+                {
+                    b.HasOne("OpenMind.Models.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OpenMind.Models.UserInterestModel", b =>

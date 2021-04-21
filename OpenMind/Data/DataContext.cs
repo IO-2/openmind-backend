@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OpenMind.Domain;
 using OpenMind.Models;
 
 namespace OpenMind.Data
@@ -15,6 +16,8 @@ namespace OpenMind.Data
         public DbSet<LongreadModel> Longreads { get; set; }
         public DbSet<SectionModel> Sections { get; set; }
         public DbSet<UserProgressBySectionModel> UsersProgressBySection { get; set; }
+        
+        public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
         
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenMind.Contracts;
+using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Responses;
 using OpenMind.Domain;
 using OpenMind.Services;
@@ -12,11 +13,11 @@ namespace OpenMind.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class SectionController : MyControllerBase
+    public class SectionsController : MyControllerBase
     {
         private readonly ISectionService _sectionService;
         
-        public SectionController(ISectionService sectionService)
+        public SectionsController(ISectionService sectionService)
         {
             this._sectionService = sectionService;
         }
@@ -36,29 +37,29 @@ namespace OpenMind.Controllers
         
         [HttpPost("create")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Create(SectionCreateContract contract)
+        public async Task<IActionResult> Create(SectionCreateRequest request)
         {
-            var result = await _sectionService.AddSection(contract.Name, contract.SectionNumber, contract.Locale);
+            var result = await _sectionService.AddSection(request.Name, request.SectionNumber, request.Locale);
             // TODO: Add validation when item exists
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
             
-            return Ok("Done!");
+            return Ok(new ActionResponseContract{Success = true});
         }
         
         [HttpDelete("delete")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Delete(ActionWithIdContract contract)
+        public async Task<IActionResult> Delete(ActionWithIdRequest request)
         {
-            var result = await _sectionService.DeleteSection(contract.Id);
+            var result = await _sectionService.DeleteSection(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
             
-            return Ok("Done!");
+            return Ok(new ActionResponseContract{Success = true});
         }
     }
 }

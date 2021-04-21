@@ -35,6 +35,7 @@ namespace OpenMind.Migrations
                     DreamingAbout = table.Column<string>(type: "text", nullable: true),
                     Inspirer = table.Column<string>(type: "text", nullable: true),
                     WhyInspired = table.Column<string>(type: "text", nullable: true),
+                    SubscriptionEndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -223,6 +224,29 @@ namespace OpenMind.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    JwtId = table.Column<string>(type: "text", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Used = table.Column<bool>(type: "boolean", nullable: false),
+                    Invalidated = table.Column<bool>(type: "boolean", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Token);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UsersProgressBySection",
                 columns: table => new
                 {
@@ -365,6 +389,11 @@ namespace OpenMind.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UsersInterests_InterestId",
                 table: "UsersInterests",
                 column: "InterestId");
@@ -405,6 +434,9 @@ namespace OpenMind.Migrations
 
             migrationBuilder.DropTable(
                 name: "Longreads");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "UsersInterests");

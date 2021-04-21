@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using OpenMind.Models;
 
-namespace OpenMind.Contracts
+namespace OpenMind.Contracts.Requests
 {
-    public class ChecklistCreateContract : Localizable
+    public class ChecklistCreateRequest : Localizable
     {
         public string Title { get; set; }
         public IFormFileCollection File { get; set; }
