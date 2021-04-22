@@ -67,7 +67,8 @@ Request **(application/form-data)**
 ```swift
 {
 	"title": String,
-	"file": PdfFile
+	"file": PdfFile,
+	"locale": String
 }
 ```
 
