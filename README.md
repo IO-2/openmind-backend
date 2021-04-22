@@ -14,7 +14,7 @@ Header example:
 - [Users](###Users)
 
 ### Checklists
-#### Base URL: `http://194.67.104.135/checklists/`
+#### Base URL: `https://openmind.ru.com/checklists/`
 #### `/get-info` [GET]
 Request **(application/json)**
 ```swift
@@ -80,7 +80,7 @@ Response **(application/pdf)**
 ```
 
 ### Users
-#### Base URL: `http://194.67.104.135/users/`
+#### Base URL: `https://openmind.ru.com/users/`
 #### `/register` [POST] 
 
 Request **(application/json)**
