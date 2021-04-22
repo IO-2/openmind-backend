@@ -202,6 +202,6 @@ Response **(application/json)**
 
 Request **(application/json)**
 
-Response **(application/form-data)**
+Response **(image/jpg OR image/png OR image/jpeg)**
 
 > ImageFile image
