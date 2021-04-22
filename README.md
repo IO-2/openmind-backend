@@ -1,4 +1,4 @@
-# REST-API Documentation
+# API Documentation
 ## Requests
 If any request ends up with errors, they will be sent by plain text
 Access token should be sent in headers for requests with **[Token required]** mark
