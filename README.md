@@ -92,7 +92,8 @@ Request **(application/json)**
 	"password": String,
 	"dreamingAbout": String,
 	"inspirer": String,
-	"whyInspired": String
+	"whyInspired": String.
+	"interests": [Int]
 }
 ```
 
