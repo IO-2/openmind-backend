@@ -13,6 +13,7 @@ namespace OpenMind.Services.Interfaces
         Task<ServiceActionResult> GetInfo(string token);
         Task<ServiceActionResult> SetAvatarAsync(IFormFile avatar, string email);
         Task<ServiceActionResult> IsEmailValid(string email);
+        Task<ServiceActionResult> IsPasswordValid(string password);
         Task<ServiceActionResult> GetAvatarAsync(string email);
 
     }

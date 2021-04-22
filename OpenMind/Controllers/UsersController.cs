@@ -11,6 +11,7 @@ using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Responses;
 using OpenMind.Domain;
 using OpenMind.Services.Interfaces;
+using ValidationResult = OpenMind.Domain.ValidationResult;
 
 namespace OpenMind.Controllers
 {
@@ -74,23 +75,6 @@ namespace OpenMind.Controllers
             return Ok(result);
         }
         
-        [HttpGet("email-validation")]
-        [MapToApiVersion("1.0")]
-        public async Task<IActionResult> IsEmailValid(string email)
-        {
-            var result = await _identityService.IsEmailValid(email);
-
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-            
-            return Ok(new ActionResponseContract
-            {
-                Success = true
-            });
-        }
-        
         [HttpDelete("delete")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -111,10 +95,26 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Register([FromBody] UserRegisterRequest request)
         {
+            var emailVerificationResult = await _identityService.IsEmailValid(request.Email);
+            if (!emailVerificationResult.Success)
+            {
+                return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
+            }
+
+            var passwordValidationResult = await _identityService.IsPasswordValid(request.Password);
+            if (!passwordValidationResult.Success)
+            {
+                return StatusCode((passwordValidationResult as ValidationResult).StatusCode);
+            }
+            
             var result = await _identityService.Register(request.Email, request.Name, request.Password, request.DreamingAbout, request.Inspirer, request.WhyInspired);
 
             if (!result.Success)
             {
+                if (result is ValidationResult)
+                {
+                    return StatusCode((result as ValidationResult).StatusCode);
+                }
                 return BadRequest(result.Errors);
             }
 
@@ -149,10 +149,26 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
+            var emailVerificationResult = await _identityService.IsEmailValid(request.Email);
+            if (!emailVerificationResult.Success)
+            {
+                return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
+            }
+
+            var passwordValidationResult = await _identityService.IsPasswordValid(request.Password);
+            if (!passwordValidationResult.Success)
+            {
+                return StatusCode((passwordValidationResult as ValidationResult).StatusCode);
+            }
+            
             var result = await _identityService.Login(request.Email, request.Password);
 
             if (!result.Success)
             {
+                if (result is ValidationResult)
+                {
+                    return StatusCode((result as ValidationResult).StatusCode);
+                }
                 return BadRequest(result.Errors);
             }
 

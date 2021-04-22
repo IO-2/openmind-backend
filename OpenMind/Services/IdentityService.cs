@@ -10,6 +10,7 @@ using Castle.Core.Internal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ using OpenMind.Domain;
 using OpenMind.Models;
 using OpenMind.Options;
 using OpenMind.Services.Interfaces;
+using OpenMind.Services.Validators;
+using OpenMind.Services.Validators.Interfaces;
 
 namespace OpenMind.Services
 {
@@ -31,15 +34,20 @@ namespace OpenMind.Services
         private readonly DataContext _context;
         private readonly IWebHostEnvironment _environment;
 
+        private readonly IValidator _emailValidator;
+        private readonly IValidator _passwordValidator;
+
         private readonly List<string> _allowedFiles = new List<string>{ "image/jpeg", "image/png", "image/jpg" }; 
 
-        public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment)
+        public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment, IEmailValidator emailValidator, IPasswordValidator passwordValidator)
         {
             this._userManager = userManager;
             this._jwtOptions = jwtOptions;
             this._tokenValidationParameters = tokenValidationParameters;
             this._context = context;
             this._environment = environment;
+            this._emailValidator = emailValidator;
+            this._passwordValidator = passwordValidator;
         }
 
         public async Task<ServiceActionResult> Register(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired)
@@ -48,9 +56,10 @@ namespace OpenMind.Services
 
             if (existingUser != null)
             {
-                return new AuthActionResult
+                return new ValidationResult
                 {
-                    Errors = new []{"User with this email address already exists"}
+                    Success = false,
+                    StatusCode = 456
                 };
             }
 
@@ -82,9 +91,10 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new AuthActionResult
+                return new ValidationResult
                 {
-                    Errors = new[] {"User does not exists"}
+                    Success = false,
+                    StatusCode = 459
                 };
             }
 
@@ -92,9 +102,10 @@ namespace OpenMind.Services
 
             if (!userHasValidPassword)
             {
-                return new AuthActionResult
+                return new ValidationResult
                 {
-                    Errors = new[] {"User/password combination is wrong"}
+                    Success = false,
+                    StatusCode = 458
                 };
             }
             
@@ -251,29 +262,32 @@ namespace OpenMind.Services
 
         public async Task<ServiceActionResult> IsEmailValid(string email)
         {
-            try {
-                var addr = new System.Net.Mail.MailAddress(email);
-            }
-            catch {
-                return new EmailValidationResult
-                {
-                    Success = false,
-                    Reason = 1
-                };
-            }
-            
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user != null)
+            int validationCode = await _emailValidator.ValidateAsync(email);
+            if (validationCode != 200)
             {
-                return new EmailValidationResult
+                return new ValidationResult
                 {
                     Success = false,
-                    Reason = 2
+                    StatusCode = validationCode
                 };
             }
 
             return OkServiceActionResult();
+        }
+
+        public async Task<ServiceActionResult> IsPasswordValid(string password)
+        {
+            var result = await _passwordValidator.ValidateAsync(password);
+
+            var success = result == 200;
+
+            return new ValidationResult
+            {
+                Success = success,
+                StatusCode = result
+            };
         }
 
         public async Task<ServiceActionResult> GetAvatarAsync(string email)

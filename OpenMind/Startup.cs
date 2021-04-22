@@ -26,6 +26,8 @@ using OpenMind.Models;
 using OpenMind.Options;
 using OpenMind.Services;
 using OpenMind.Services.Interfaces;
+using OpenMind.Services.Validators;
+using OpenMind.Services.Validators.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OpenMind
@@ -49,6 +51,8 @@ namespace OpenMind
             
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IChecklistService, ChecklistService>();
+            services.AddScoped<IEmailValidator, EmailValidator>();
+            services.AddScoped<IPasswordValidator, PasswordValidator>();
             
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -80,7 +84,13 @@ namespace OpenMind
                     .UseNpgsql(Configuration.GetConnectionString("Default"));
             });
             
-            services.AddIdentity<UserModel, IdentityRole>()
+            services.AddIdentity<UserModel, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireDigit = true;
+                })
                 .AddEntityFrameworkStores<DataContext>();
 
             services.AddControllers();
