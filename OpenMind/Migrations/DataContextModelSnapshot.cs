@@ -373,8 +373,8 @@ namespace OpenMind.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("SubscriptionEndDate")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<long>("SubscriptionEndDate")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");

@@ -10,7 +10,7 @@ using OpenMind.Data;
 namespace OpenMind.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210421162232_init")]
+    [Migration("20210422110757_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -375,8 +375,8 @@ namespace OpenMind.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("SubscriptionEndDate")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<long>("SubscriptionEndDate")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");

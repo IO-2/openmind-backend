@@ -35,7 +35,7 @@ namespace OpenMind.Migrations
                     DreamingAbout = table.Column<string>(type: "text", nullable: true),
                     Inspirer = table.Column<string>(type: "text", nullable: true),
                     WhyInspired = table.Column<string>(type: "text", nullable: true),
-                    SubscriptionEndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    SubscriptionEndDate = table.Column<long>(type: "bigint", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

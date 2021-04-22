@@ -198,7 +198,8 @@ namespace OpenMind.Services
                     DreamingAbout = user.DreamingAbout,
                     Inspirer = user.Inspirer,
                     SubscriptionEndDate = user.SubscriptionEndDate,
-                    WhyInspired = user.WhyInspired
+                    WhyInspired = user.WhyInspired,
+                    Interests = user.Interests.Select(x => x.Interest).ToList()
                 }
             };
         }
