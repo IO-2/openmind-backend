@@ -38,7 +38,7 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
             
-            return Ok(result);
+            return Ok((result as UserInfoActionResult).User);
         }
         
         [HttpGet("get-avatar")]
