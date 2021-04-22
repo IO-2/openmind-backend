@@ -153,16 +153,12 @@ Response **(application/json)**
 
 ```json
 {
-    "user": {
-        "name": null,
-        "email": "art3a@niuitmo.ru",
-        "dreamingAbout": "Bed",
-        "inspirer": "Tamerlan Vstaldualdibom",
-        "whyInspired": "gay came out last month",
-        "subscriptionEndDate": "0001-01-01T00:00:00"
-    },
-    "success": true,
-    "errors": null
+	"name": null,
+	"email": "art3a@niuitmo.ru",
+	"dreamingAbout": "Bed",
+	"inspirer": "Tamerlan Vstaldualdibom",
+	"whyInspired": "gay came out last month",
+	"subscriptionEndDate": "0001-01-01T00:00:00"
 }
 ```
 
