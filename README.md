@@ -1,4 +1,4 @@
-# API Documentation
+# REST-API Documentation
 ## Requests
 If any request ends up with errors, they will be sent by plain text
 Access token should be sent in headers for requests with **[Token required]** mark
@@ -106,6 +106,11 @@ Response **(application/json)**
 }
 ```
 
+Error codes
+> 455 - email format is incorrect
+> 456 - email is already exists (on register)
+> 457 - password format is incorrect (on register)
+
 #### `/login` [POST]
 
 Request **(application/json)**
@@ -125,6 +130,11 @@ Response **(application/json)**
 	"refreshToken": "another string of nonsense"
 }
 ```
+
+Error codes
+> 455 - email format is incorrect
+> 458 - incorrect password
+> 459 - user does not exists
 
 #### `/refresh` [POST] 
 This request does not require access token in header, but in body along with refresh token. New pair will be given
@@ -153,12 +163,16 @@ Response **(application/json)**
 
 ```json
 {
-	"name": null,
-	"email": "art3a@niuitmo.ru",
-	"dreamingAbout": "Bed",
-	"inspirer": "Tamerlan Vstaldualdibom",
-	"whyInspired": "gay came out last month",
-	"subscriptionEndDate": "0001-01-01T00:00:00"
+    "user": {
+        "name": null,
+        "email": "art3a@niuitmo.ru",
+        "dreamingAbout": "Bed",
+        "inspirer": "Tamerlan Vstaldualdibom",
+        "whyInspired": "gay came out last month",
+        "subscriptionEndDate": "0001-01-01T00:00:00"
+    },
+    "success": true,
+    "errors": null
 }
 ```
 
@@ -187,28 +201,6 @@ Response **(application/json)**
 	"success": true
 }
 ```
-
-#### `/email-validation` [GET] 
-
-Request **(application/json)**
-```swift
-{
-	"email": String
-}
-
-```
-Response **(application/json)**
-
-```json
-{
-	"success": true/false,
-	"reason": 1
-}
-```
-
-Reasons list
-> 1 - Invalid email format
-> 2 - Email already exists
 
 #### `/get-avatar` [PUT] [Token required]
 
