@@ -1,7 +1,14 @@
 # REST-API Documentation
 ## Requests
 If any request ends up with errors, they will be sent by plain text
-Access token should be sent in headers
+Access token should be sent in headers for requests with **[Token required]** mark
+Header example:
+```json
+{
+	"version": "1.0",
+	"Authorization": "bearer {ACCESS TOKEN HERE}"
+}
+```
 
 - [Checklists](###Checklists)
 - [Users](###Users)
@@ -10,9 +17,11 @@ Access token should be sent in headers
 #### Base URL: `http://194.67.104.135/checklists/`
 #### `/get-info` [GET]
 Request **(application/json)**
-
-> int id
-
+```swift
+{
+	"id": Int
+}
+```
 Response **(application/json)**
 
 ```json
@@ -25,16 +34,24 @@ Response **(application/json)**
 #### `/get-file` [GET]
 Request **(application/json)**
 
-> int id
+```swift
+{
+	"id": Int
+}
+```
 
 Response **(application/pdf)**
 
 > PDF file
 
-#### `/delete` [DELETE]
+#### `/delete` [DELETE] [Token required] [Admin access]
 Request **(application/json)**
 
-> int id
+```swift
+{
+	"id": Int
+}
+```
 
 Response **(application/pdf)**
 
@@ -44,11 +61,15 @@ Response **(application/pdf)**
 }
 ```
 
-#### `/create` [POST]
+#### `/create` [POST] [Token required] [Admin access]
 Request **(application/form-data)**
 
-> string title
-> PdfFile file
+```swift
+{
+	"title": String,
+	"file": PdfFile
+}
+```
 
 Response **(application/pdf)**
 
@@ -60,7 +81,7 @@ Response **(application/pdf)**
 
 ### Users
 #### Base URL: `http://194.67.104.135/users/`
-#### `/register` [POST]
+#### `/register` [POST] 
 
 Request **(application/json)**
 
@@ -104,12 +125,16 @@ Response **(application/json)**
 }
 ```
 
-#### `/refresh` [POST]
+#### `/refresh` [POST] 
+This request does not require access token in header, but in body along with refresh token. New pair will be given
 
 Request **(application/json)**
-> string token
-> string refreshToken
-
+```swift
+{
+	"token": String,
+	"refreshToken": String
+}
+```
 Response **(application/json)**
 
 ```json
@@ -119,10 +144,9 @@ Response **(application/json)**
 }
 ```
 
-#### `/get` [GET]
+#### `/get` [GET] [Token required]
 
 Request **(application/json)**
-> string token
 
 Response **(application/json)**
 
@@ -141,10 +165,10 @@ Response **(application/json)**
 }
 ```
 
-#### `/delete` [DELETE]
+#### `/delete` [DELETE] [Token required]
 
 Request **(application/json)**
-> string token
+
 
 Response **(application/json)**
 
@@ -154,10 +178,9 @@ Response **(application/json)**
 }
 ```
 
-#### `/upload-avatar` [PUT]
+#### `/upload-avatar` [PUT] [Token required]
 
 Request **(application/form-data)**
-> string token
 > ImageFile file
 
 Response **(application/json)**
@@ -168,11 +191,15 @@ Response **(application/json)**
 }
 ```
 
-#### `/email-validation` [GET]
+#### `/email-validation` [GET] 
 
 Request **(application/json)**
-> string email
+```swift
+{
+	"email": String
+}
 
+```
 Response **(application/json)**
 
 ```json
@@ -186,10 +213,9 @@ Reasons list
 > 1 - Invalid email format
 > 2 - Email already exists
 
-#### `/get-avatar` [PUT]
+#### `/get-avatar` [PUT] [Token required]
 
 Request **(application/json)**
-> string token
 
 Response **(application/form-data)**
 
