@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -50,7 +51,7 @@ namespace OpenMind.Services
             this._passwordValidator = passwordValidator;
         }
 
-        public async Task<ServiceActionResult> Register(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired)
+        public async Task<ServiceActionResult> Register(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired, ICollection<int> interests)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -76,11 +77,18 @@ namespace OpenMind.Services
             var createdUser = await _userManager.CreateAsync(newUser, password);
             if (!createdUser.Succeeded)
             {
-                return new AuthActionResult
+                return new ValidationResult
                 {
-                    Errors = createdUser.Errors.Select(x => x.Description)
+                    StatusCode = 455
                 };
             }
+
+            newUser.Interests = interests.Select(x => new InterestModel
+            {
+                User = newUser,
+                Interest = x
+            }).ToList();
+            await _userManager.UpdateAsync(newUser);
 
             return await GenerateAuthenticationResultForUser(newUser);
         }

@@ -107,7 +107,7 @@ namespace OpenMind.Controllers
                 return StatusCode((passwordValidationResult as ValidationResult).StatusCode);
             }
             
-            var result = await _identityService.Register(request.Email, request.Name, request.Password, request.DreamingAbout, request.Inspirer, request.WhyInspired);
+            var result = await _identityService.Register(request.Email, request.Name, request.Password, request.DreamingAbout, request.Inspirer, request.WhyInspired, request.Interests);
 
             if (!result.Success)
             {
