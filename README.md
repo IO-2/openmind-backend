@@ -185,7 +185,7 @@ Response **(application/json)**
 }
 ```
 
-#### `/upload-avatar` [PUT] [Token required]
+#### `/upload-avatar` [POST] [Token required]
 
 Request **(application/form-data)**
 > ImageFile file
