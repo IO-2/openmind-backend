@@ -63,12 +63,17 @@ Response **(application/pdf)**
 #### `/register` [POST]
 
 Request **(application/json)**
-> string name
-> string email
-> string password
-> string dreamingAbout
-> string inspirer
-> string whyInspired
+
+```swift
+{
+	"name": String,
+	"email": String,
+	"password": String,
+	"dreamingAbout": String,
+	"inspirer": String,
+	"whyInspired": String
+}
+```
 
 Response **(application/json)**
 
@@ -82,8 +87,13 @@ Response **(application/json)**
 #### `/login` [POST]
 
 Request **(application/json)**
-> string email
-> string password
+
+```swift
+{
+	"email": String,
+	"password": String
+}
+```
 
 Response **(application/json)**
 
