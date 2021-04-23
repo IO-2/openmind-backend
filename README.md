@@ -10,11 +10,11 @@ Header example:
 }
 ```
 
-- [Checklists](###Checklists)
+- [Media](###Media)
 - [Users](###Users)
 
-### Checklists
-#### Base URL: `https://openmind.ru.com/checklists/`
+### Media
+#### Base URL: `https://openmind.ru.com/media/`
 #### `/get-info` [GET]
 Request **(application/json)**
 ```swift
@@ -27,9 +27,16 @@ Response **(application/json)**
 ```json
 {
 	"title": "Time Management",
-	"locale": "en"
+	"locale": "en",
+	"text": "Some text about Time Management",
+	"type": 1
 }
 ```
+
+Media types
+> 1 - Checklist
+> 2 - Longread
+> 3 - About cool guys
 
 #### `/get-file` [GET]
 Request **(application/json)**
@@ -40,9 +47,9 @@ Request **(application/json)**
 }
 ```
 
-Response **(application/pdf)**
+Response **(image/png OR image/jpeg OR image/jpg)**
 
-> PDF file
+> Image file
 
 #### `/delete` [DELETE] [Token required] [Admin access]
 Request **(application/json)**
@@ -53,7 +60,7 @@ Request **(application/json)**
 }
 ```
 
-Response **(application/pdf)**
+Response **(application/json)**
 
 ```json
 {
@@ -67,10 +74,17 @@ Request **(application/form-data)**
 ```swift
 {
 	"title": String,
-	"file": PdfFile,
-	"locale": String
+	"file": Image,
+	"text": String,
+	"locale": String,
+	"type": 1
 }
 ```
+
+Media types
+> 1 - Checklist
+> 2 - Longread
+> 3 - About cool guys
 
 Response **(application/pdf)**
 
