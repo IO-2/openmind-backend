@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace OpenMind.Contracts.Requests
 {
     public class SetAvatarRequest
     {
-        public IFormFileCollection Files { get; set; }
+        [Required]
+        public IFormFileCollection File { get; set; }
     }
 }

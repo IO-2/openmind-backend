@@ -65,10 +65,14 @@ namespace OpenMind.Controllers
         public async Task<IActionResult> UploadAvatar([FromForm] SetAvatarRequest request)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _identityService.SetAvatarAsync(request.Files.FirstOrDefault(), email);
+            var result = await _identityService.SetAvatarAsync(request.File.FirstOrDefault(), email);
 
             if (!result.Success)
             {
+                if (result is ValidationResult)
+                {
+                    return StatusCode((result as ValidationResult).StatusCode);
+                }
                 return BadRequest(result.Errors);
             }
 
@@ -153,12 +157,6 @@ namespace OpenMind.Controllers
             if (!emailVerificationResult.Success)
             {
                 return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
-            }
-
-            var passwordValidationResult = await _identityService.IsPasswordValid(request.Password);
-            if (!passwordValidationResult.Success)
-            {
-                return StatusCode((passwordValidationResult as ValidationResult).StatusCode);
             }
             
             var result = await _identityService.Login(request.Email, request.Password);

@@ -4,9 +4,8 @@ namespace OpenMind.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public int PageNumber { get; set; }
         public string Description { get; set; }
-        public string VideoUtl { get; set; }
-        
-        public virtual CourseModel Course { get; set; }
+        public string VideoUrl { get; set; }
     }
 }

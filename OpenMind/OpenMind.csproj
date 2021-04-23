@@ -25,7 +25,8 @@
       <Folder Include="Helpers" />
       <Folder Include="Migrations" />
       <Folder Include="wwwroot" />
-      <Folder Include="wwwroot\Checklists" />
+      <Folder Include="wwwroot\Avatars" />
+      <Folder Include="wwwroot\Media" />
     </ItemGroup>
 
 </Project>

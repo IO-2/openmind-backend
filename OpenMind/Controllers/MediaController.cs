@@ -15,33 +15,33 @@ using OpenMind.Services;
 namespace OpenMind.Controllers
 {
     [ApiVersion("1.0")]
-    public class ChecklistsController : MyControllerBase
+    public class MediaController : MyControllerBase
     {
-        private readonly IChecklistService _checklistService;
+        private readonly IMediaService _mediaService;
         
-        public ChecklistsController(IChecklistService checklistService)
+        public MediaController(IMediaService mediaService)
         {
-            this._checklistService = checklistService;
+            this._mediaService = mediaService;
         }
         
         [HttpGet("get-info")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetInfo([FromQuery] ActionWithIdRequest request)
         {
-            var result = await _checklistService.GetInfo(request.Id);
+            var result = await _mediaService.GetInfo(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as ChecklistActionResult).Checklist);
+            return Ok((result as MediaActionResult).Media);
         }
         
         [HttpGet("get-file")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetFile([FromQuery] ActionWithIdRequest request)
         {
-            var result = await _checklistService.GetFile(request.Id);
+            var result = await _mediaService.GetFile(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -55,7 +55,7 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Delete(ActionWithIdRequest request)
         {
-            var result = await _checklistService.Delete(request.Id);
+            var result = await _mediaService.Delete(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -66,10 +66,10 @@ namespace OpenMind.Controllers
 
         [HttpPost("create")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Create([FromForm] ChecklistCreateRequest request)
+        public async Task<IActionResult> Create([FromForm] MediaCreateRequest request)
         {
             var file = request.File.FirstOrDefault();
-            var result = await _checklistService.Create(request.Title, file, request.Locale);
+            var result = await _mediaService.Create(request.Title, request.Text, request.Type, file, request.Locale);
 
             if (!result.Success)
             {

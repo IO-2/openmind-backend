@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
@@ -50,9 +51,10 @@ namespace OpenMind
             services.AddSingleton(jwtOptions);
             
             services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IChecklistService, ChecklistService>();
+            services.AddScoped<IMediaService, MediaService>();
             services.AddScoped<IEmailValidator, EmailValidator>();
             services.AddScoped<IPasswordValidator, PasswordValidator>();
+            
             
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -64,8 +66,9 @@ namespace OpenMind
                 ValidateLifetime = true
             };
 
-            services.AddSingleton(tokenValidationParameters);
             
+            services.AddSingleton(tokenValidationParameters);
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

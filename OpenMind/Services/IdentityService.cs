@@ -27,7 +27,7 @@ using OpenMind.Services.Validators.Interfaces;
 
 namespace OpenMind.Services
 {
-    public class IdentityService : Service, IIdentityService
+    public class IdentityService : FileWorkerService, IIdentityService
     {
         private readonly UserManager<UserModel> _userManager;
         private readonly JwtOptions _jwtOptions;
@@ -38,8 +38,6 @@ namespace OpenMind.Services
         private readonly IValidator _emailValidator;
         private readonly IValidator _passwordValidator;
 
-        private readonly List<string> _allowedFiles = new List<string>{ "image/jpeg", "image/png", "image/jpg" }; 
-
         public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment, IEmailValidator emailValidator, IPasswordValidator passwordValidator)
         {
             this._userManager = userManager;
@@ -49,6 +47,8 @@ namespace OpenMind.Services
             this._environment = environment;
             this._emailValidator = emailValidator;
             this._passwordValidator = passwordValidator;
+            
+            base.AllowedFiles = new List<string>{ "image/jpeg", "image/png", "image/jpg" };
         }
 
         public async Task<ServiceActionResult> Register(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired, ICollection<int> interests)
@@ -85,7 +85,6 @@ namespace OpenMind.Services
 
             newUser.Interests = interests.Select(x => new InterestModel
             {
-                User = newUser,
                 Interest = x
             }).ToList();
             await _userManager.UpdateAsync(newUser);
@@ -188,6 +187,8 @@ namespace OpenMind.Services
                     Errors = new[] {"User does not exists"}
                 };
             }
+            
+            DeleteFile(user.AvatarUrl);
 
             _context.Users.Remove(await _context.Users.SingleOrDefaultAsync(x => x.Email == email));
             await _context.SaveChangesAsync();
@@ -229,43 +230,29 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new ServiceActionResult
+                return new ValidationResult
                 {
+                    Success = false,
+                    StatusCode = 459,
                     Errors = new[] {"User does not exists"}
                 };
             }
             
+            DeleteFile(user.AvatarUrl);
+            
             try
             {
-                if (file.Length > 0 && _allowedFiles.Contains(file.ContentType))
-                {
-                    var avatarPaths = Path.Combine(_environment.WebRootPath, "Avatars");
-                    if (!Directory.Exists(avatarPaths))
-                    {
-                        Directory.CreateDirectory(avatarPaths);
-                    }
-                    
-                    // TODO: Hash name
-                    var newFilename = user.Id + file.FileName;
+                var result = await SaveFile(_environment.WebRootPath, "Avatars", file);
 
-                    using (FileStream fileStream = System.IO.File.Create(Path.Combine(avatarPaths, newFilename)))
-                    {
-                        await file.CopyToAsync(fileStream);
-                        await fileStream.FlushAsync();
-                    }
-
-                    user.AvatarUrl = Path.Combine(avatarPaths, newFilename);
-
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
-                    return OkServiceActionResult();
-                }
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                
+                return OkServiceActionResult();
             }
             catch (Exception e)
             {
                 return BadServiceActionResult(e.Message);
             }
-            return BadServiceActionResult("File error");
         }
 
         public async Task<ServiceActionResult> IsEmailValid(string email)
@@ -304,9 +291,10 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new ServiceActionResult
+                return new ValidationResult
                 {
-                    Errors = new[] {"User does not exists"}
+                    Success = false,
+                    StatusCode = 459
                 };
             }
 
