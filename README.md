@@ -1,4 +1,4 @@
-# API Documentation
+# REST-API Documentation
 ## Requests
 If any request ends up with errors, they will be sent by plain text
 Access token should be sent in headers for requests with **[Token required]** mark
@@ -14,7 +14,7 @@ Header example:
 - [Users](###Users)
 
 ### Checklists
-#### Base URL: `http://194.67.104.135/checklists/`
+#### Base URL: `https://openmind.ru.com/checklists/`
 #### `/get-info` [GET]
 Request **(application/json)**
 ```swift
@@ -67,7 +67,8 @@ Request **(application/form-data)**
 ```swift
 {
 	"title": String,
-	"file": PdfFile
+	"file": PdfFile,
+	"locale": String
 }
 ```
 
@@ -80,7 +81,7 @@ Response **(application/pdf)**
 ```
 
 ### Users
-#### Base URL: `http://194.67.104.135/users/`
+#### Base URL: `https://openmind.ru.com/users/`
 #### `/register` [POST] 
 
 Request **(application/json)**
@@ -106,6 +107,11 @@ Response **(application/json)**
 }
 ```
 
+Error codes
+> 455 - email format is incorrect
+> 456 - email is already exists (on register)
+> 457 - password format is incorrect (on register)
+
 #### `/login` [POST]
 
 Request **(application/json)**
@@ -125,6 +131,11 @@ Response **(application/json)**
 	"refreshToken": "another string of nonsense"
 }
 ```
+
+Error codes
+> 455 - email format is incorrect
+> 458 - incorrect password
+> 459 - user does not exists
 
 #### `/refresh` [POST] 
 This request does not require access token in header, but in body along with refresh token. New pair will be given
@@ -175,7 +186,7 @@ Response **(application/json)**
 }
 ```
 
-#### `/upload-avatar` [PUT] [Token required]
+#### `/upload-avatar` [POST] [Token required]
 
 Request **(application/form-data)**
 > ImageFile file
@@ -188,32 +199,10 @@ Response **(application/json)**
 }
 ```
 
-#### `/email-validation` [GET] 
-
-Request **(application/json)**
-```swift
-{
-	"email": String
-}
-
-```
-Response **(application/json)**
-
-```json
-{
-	"success": true/false,
-	"reason": 1
-}
-```
-
-Reasons list
-> 1 - Invalid email format
-> 2 - Email already exists
-
 #### `/get-avatar` [PUT] [Token required]
 
 Request **(application/json)**
 
-Response **(application/form-data)**
+Response **(image/jpg OR image/png OR image/jpeg)**
 
 > ImageFile image
