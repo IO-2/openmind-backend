@@ -52,7 +52,7 @@ namespace OpenMind.Services
             base.AllowedFiles = new List<string>{ "image/jpeg", "image/png", "image/jpg" };
         }
 
-        public async Task<ServiceActionResult> Register(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired, ICollection<int> interests)
+        public async Task<ServiceActionResult> RegisterAsync(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired, ICollection<int> interests)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
 
@@ -115,7 +115,7 @@ namespace OpenMind.Services
             return await GenerateAuthenticationResultForUser(newUser);
         }
 
-        public async Task<ServiceActionResult> Login(string email, string password)
+        public async Task<ServiceActionResult> LoginAsync(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -219,7 +219,7 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> GetInfo(string email)
+        public async Task<ServiceActionResult> GetInfoAsync(string email, string locale)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -231,7 +231,7 @@ namespace OpenMind.Services
                 };
             }
 
-            var courses = await _context.Courses.ToListAsync();
+            var courses = await _context.Courses.Where(x => x.Locale == locale).ToListAsync();
 
             var successes = new Dictionary<int, float>();
 
@@ -306,7 +306,7 @@ namespace OpenMind.Services
             }
         }
 
-        public async Task<ServiceActionResult> IsEmailValid(string email)
+        public async Task<ServiceActionResult> IsEmailValidAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -323,7 +323,7 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> IsPasswordValid(string password)
+        public async Task<ServiceActionResult> IsPasswordValidAsync(string password)
         {
             var result = await _passwordValidator.ValidateAsync(password);
 

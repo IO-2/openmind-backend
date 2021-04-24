@@ -6,10 +6,10 @@ namespace OpenMind.Services
 {
     public interface IMediaService
     {
-        Task<ServiceActionResult> Create(string name, string text, int type, IFormFile file, string url);
-        Task<ServiceActionResult> GetInfo(int id);
-        Task<ServiceActionResult> GetFile(int id);
-        Task<ServiceActionResult> Delete(int id);
-        Task<ServiceActionResult> GetInfoAll(int? page, string locale);
+        Task<ServiceActionResult> CreateAsync(string name, string text, int type, IFormFile file, string url);
+        Task<ServiceActionResult> GetInfoAsync(int id);
+        Task<ServiceActionResult> GetFileAsync(int id);
+        Task<ServiceActionResult> DeleteAsync(int id);
+        Task<ServiceActionResult> GetInfoAllAsync(int? page, string locale);
     }
 }

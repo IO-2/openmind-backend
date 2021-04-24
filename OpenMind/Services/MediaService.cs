@@ -27,7 +27,7 @@ namespace OpenMind.Services
             base.AllowedFiles = new List<string> {"image/png", "image/jpg", "image/jpeg"};
         }
         
-        public async Task<ServiceActionResult> Create(string name, string text, int type, IFormFile file, string locale)
+        public async Task<ServiceActionResult> CreateAsync(string name, string text, int type, IFormFile file, string locale)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace OpenMind.Services
             return BadServiceActionResult("File error");
         }
 
-        public async Task<ServiceActionResult> GetInfo(int id)
+        public async Task<ServiceActionResult> GetInfoAsync(int id)
         {
             var media = await _context.Media.FirstOrDefaultAsync(x => x.Id == id);
             if (media == null)
@@ -75,7 +75,7 @@ namespace OpenMind.Services
             };
         }
 
-        public async Task<ServiceActionResult> GetFile(int id)
+        public async Task<ServiceActionResult> GetFileAsync(int id)
         {
             var media = await _context.Media.FirstOrDefaultAsync(x => x.Id == id);
             if (media == null)
@@ -92,7 +92,7 @@ namespace OpenMind.Services
             };
         }
 
-        public async Task<ServiceActionResult> Delete(int id)
+        public async Task<ServiceActionResult> DeleteAsync(int id)
         {
             var media = await _context.Media.FirstOrDefaultAsync(x => x.Id == id);
             if (media == null)
@@ -108,7 +108,7 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> GetInfoAll(int? page, string locale)
+        public async Task<ServiceActionResult> GetInfoAllAsync(int? page, string locale)
         {
             var medias = _context.Media
                 .Where(x => x.Locale == locale)

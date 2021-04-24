@@ -29,10 +29,10 @@ namespace OpenMind.Controllers
         [HttpGet("get")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([Required] string locale)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _identityService.GetInfo(email);
+            var result = await _identityService.GetInfoAsync(email, locale);
 
             if (!result.Success)
             {
@@ -99,19 +99,19 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Register([FromBody] UserRegisterRequest request)
         {
-            var emailVerificationResult = await _identityService.IsEmailValid(request.Email);
+            var emailVerificationResult = await _identityService.IsEmailValidAsync(request.Email);
             if (!emailVerificationResult.Success)
             {
                 return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
             }
 
-            var passwordValidationResult = await _identityService.IsPasswordValid(request.Password);
+            var passwordValidationResult = await _identityService.IsPasswordValidAsync(request.Password);
             if (!passwordValidationResult.Success)
             {
                 return StatusCode((passwordValidationResult as ValidationResult).StatusCode);
             }
             
-            var result = await _identityService.Register(request.Email, request.Name, request.Password, request.DreamingAbout, request.Inspirer, request.WhyInspired, request.Interests);
+            var result = await _identityService.RegisterAsync(request.Email, request.Name, request.Password, request.DreamingAbout, request.Inspirer, request.WhyInspired, request.Interests);
 
             if (!result.Success)
             {
@@ -153,13 +153,13 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
-            var emailVerificationResult = await _identityService.IsEmailValid(request.Email);
+            var emailVerificationResult = await _identityService.IsEmailValidAsync(request.Email);
             if (!emailVerificationResult.Success)
             {
                 return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
             }
             
-            var result = await _identityService.Login(request.Email, request.Password);
+            var result = await _identityService.LoginAsync(request.Email, request.Password);
 
             if (!result.Success)
             {

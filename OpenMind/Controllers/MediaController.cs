@@ -29,7 +29,7 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetInfo([FromQuery] ActionWithIdRequest request)
         {
-            var result = await _mediaService.GetInfo(request.Id);
+            var result = await _mediaService.GetInfoAsync(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -47,7 +47,7 @@ namespace OpenMind.Controllers
                 return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
             }
             
-            var result = await _mediaService.GetInfoAll(request.Page, request.Locale);
+            var result = await _mediaService.GetInfoAllAsync(request.Page, request.Locale);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -60,7 +60,7 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetFile([FromQuery] ActionWithIdRequest request)
         {
-            var result = await _mediaService.GetFile(request.Id);
+            var result = await _mediaService.GetFileAsync(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -74,7 +74,7 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Delete(ActionWithIdRequest request)
         {
-            var result = await _mediaService.Delete(request.Id);
+            var result = await _mediaService.DeleteAsync(request.Id);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -93,7 +93,7 @@ namespace OpenMind.Controllers
             }
             
             var file = request.File.FirstOrDefault();
-            var result = await _mediaService.Create(request.Title, request.Text, request.Type, file, request.Locale);
+            var result = await _mediaService.CreateAsync(request.Title, request.Text, request.Type, file, request.Locale);
 
             if (!result.Success)
             {
