@@ -207,6 +207,11 @@ Response **(application/json)**
 #### `/get` [GET] [Token required]
 
 Request **(application/json)**
+```swift
+{
+	"locale": String
+}
+```
 
 Response **(application/json)**
 
