@@ -17,12 +17,14 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.4" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.5" />
+        <PackageReference Include="PagedList.Core" Version="1.17.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.2" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.2" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Helpers" />
+      <Folder Include="Installers" />
       <Folder Include="Migrations" />
       <Folder Include="wwwroot" />
       <Folder Include="wwwroot\Avatars" />

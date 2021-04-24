@@ -13,5 +13,6 @@ namespace OpenMind.Contracts.Responses
         public string WhyInspired { get; set; }
         public long SubscriptionEndDate { get; set; }
         public ICollection<int> Interests { get; set; }
+        public Dictionary<int, float> Successes { get; set; }
     }
 }

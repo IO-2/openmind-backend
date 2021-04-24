@@ -177,5 +177,29 @@ namespace OpenMind.Controllers
                 RefreshToken = tokenResult.RefreshToken
             });
         }
+        
+        [HttpPost("add-progress")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> AddProgress(int sectionNumber, int progress)
+        {
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await _identityService.AddProgressAsync(email, sectionNumber, progress);
+
+            if (!result.Success)
+            {
+                if (result is ValidationResult)
+                {
+                    return StatusCode((result as ValidationResult).StatusCode);
+                }
+                return BadRequest(result.Errors);
+            }
+
+            var tokenResult = result as AuthActionResult;
+            return Ok(new AuthSuccessResponse
+            {
+                Token = tokenResult.Token,
+                RefreshToken = tokenResult.RefreshToken
+            });
+        }
     }
 }

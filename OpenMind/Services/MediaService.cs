@@ -11,6 +11,7 @@ using OpenMind.Contracts.Responses;
 using OpenMind.Data;
 using OpenMind.Domain;
 using OpenMind.Models;
+using PagedList.Core;
 
 namespace OpenMind.Services
 {
@@ -40,7 +41,8 @@ namespace OpenMind.Services
                         ImageUrl = result.SavedFilePath,
                         Locale = locale,
                         Text = text,
-                        Type = type
+                        Type = type,
+                        UploadedTime = DateTimeOffset.Now.ToUnixTimeSeconds()
                     });
                     await _context.SaveChangesAsync();
                     return OkServiceActionResult();
@@ -106,9 +108,25 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public Task<ServiceActionResult> GetAll(string query)
+        public async Task<ServiceActionResult> GetInfoAll(int page, string locale)
         {
-            throw new NotImplementedException();
+            var medias = _context.Media
+                .Where(x => x.Locale == locale)
+                .OrderBy(x => x.UploadedTime)
+                .Reverse();
+
+            return new AllMediaActionResult
+            {
+                Medias = medias.ToPagedList(page, 20).Select(x => new MediaResponseContract
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Text = x.Text,
+                    Locale = x.Locale,
+                    Type = x.Type
+                }),
+                Success = true
+            };
         }
     }
 }

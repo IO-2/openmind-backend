@@ -37,6 +37,19 @@ namespace OpenMind.Controllers
             return Ok((result as MediaActionResult).Media);
         }
         
+        [HttpGet("get-info-all")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetInfoAll(string locale, int page)
+        {
+            var result = await _mediaService.GetInfoAll(page, locale);
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok((result as AllMediaActionResult).Medias);
+        }
+        
         [HttpGet("get-file")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetFile([FromQuery] ActionWithIdRequest request)

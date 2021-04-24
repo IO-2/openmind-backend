@@ -35,6 +35,8 @@ namespace OpenMind
 {
     public class Startup
     {
+        private readonly string MyAllowSpecificOrigins = "*";
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -47,15 +49,16 @@ namespace OpenMind
         {
             var jwtOptions = new JwtOptions();
             Configuration.Bind(nameof(JwtOptions), jwtOptions);
-            
+
             services.AddSingleton(jwtOptions);
-            
+
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IMediaService, MediaService>();
             services.AddScoped<IEmailValidator, EmailValidator>();
             services.AddScoped<IPasswordValidator, PasswordValidator>();
-            
-            
+            services.AddScoped<ICourcesService, CourseService>();
+
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -66,27 +69,38 @@ namespace OpenMind
                 ValidateLifetime = true
             };
 
-            
+
             services.AddSingleton(tokenValidationParameters);
 
             services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = tokenValidationParameters;
+                });
+
+            services.AddCors(options =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.SaveToken = true;
-                x.TokenValidationParameters = tokenValidationParameters;
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
-            
+
             services.AddDbContext<DataContext>(x =>
             {
                 x.UseLazyLoadingProxies()
                     .UseNpgsql(Configuration.GetConnectionString("Default"));
             });
-            
+
             services.AddIdentity<UserModel, IdentityRole>(options =>
                 {
                     options.Password.RequiredLength = 8;
@@ -102,73 +116,8 @@ namespace OpenMind
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.ApiVersionReader = new HeaderApiVersionReader("version");
             });
-            
-            services.AddSwaggerGen(c =>
-            {
-                var swaggerOptions = new SwaggerOptions();
-                Configuration.GetSection("Swagger").Bind(swaggerOptions);
-            
-                foreach (var currentVersion in swaggerOptions.Versions)
-                {
-                    c.SwaggerDoc(currentVersion.Name, new OpenApiInfo
-                    {
-                        Title = swaggerOptions.Title,
-                        Version = currentVersion.Name,
-                        Description = swaggerOptions.Description
-                    });
-                }
-
-                c.DocInclusionPredicate((version, desc) =>
-                {
-                    if (!desc.TryGetMethodInfo(out MethodInfo methodInfo))
-                    {
-                        return false;
-                    }
-                    var versions = methodInfo.DeclaringType.GetConstructors()
-                        .SelectMany(constructorInfo => constructorInfo.DeclaringType.CustomAttributes
-                            .Where(attributeData => attributeData.AttributeType == typeof(ApiVersionAttribute))
-                            .SelectMany(attributeData => attributeData.ConstructorArguments
-                                .Select(attributeTypedArgument => attributeTypedArgument.Value)));
-
-                    return versions.Any(v => $"{v}" == version);
-                });
-                
-                c.EnableAnnotations();
-                
-                var security = new Dictionary<string, IEnumerable<string>>
-                {
-                    {"Bearer", new string[0]}
-                };
-                
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the bearer scheme",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                
-                // Dictionary
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                    }
-                });
-            });
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -191,6 +140,8 @@ namespace OpenMind
             }
 
             app.UseRouting();
+            
+            app.UseCors(MyAllowSpecificOrigins);
             
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

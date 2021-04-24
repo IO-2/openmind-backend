@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,7 +72,29 @@ namespace OpenMind.Services
                 UserName = email,
                 DreamingAbout = dreamingAbout,
                 Inspirer = inspirer,
-                WhyInspired = whyInspired
+                WhyInspired = whyInspired,
+                Progresses = new List<UserProgressBySectionModel>
+                {
+                    new()
+                    {
+                        Section = 1,
+                        CompletedAmount = 0
+                    },new()
+                    {
+                        Section = 2,
+                        CompletedAmount = 0
+                    },
+                    new()
+                    {
+                        Section = 3,
+                        CompletedAmount = 0
+                    },
+                    new()
+                    {
+                        Section = 4,
+                        CompletedAmount = 0
+                    }
+                }
             };
 
             var createdUser = await _userManager.CreateAsync(newUser, password);
@@ -208,6 +231,32 @@ namespace OpenMind.Services
                 };
             }
 
+            var courses = await _context.Courses.ToListAsync();
+
+            var successes = new Dictionary<int, float>();
+
+            for (int i = 1; i <= 4; i++)
+            {
+                UserProgressBySectionModel? first = null;
+                foreach (var x in user.Progresses)
+                {
+                    if (x.Section == i)
+                    {
+                        first = x;
+                        break;
+                    }
+                }
+
+                var coursesBySection = courses.Count(x => x.Section == i);
+                if (coursesBySection == 0)
+                {
+                    successes.Add(i, 0f);
+                    continue;
+                }
+                if (first != null) successes.Add(i, first.CompletedAmount / coursesBySection);
+            }
+            
+
             return new UserInfoActionResult
             {
                 Success = true,
@@ -219,7 +268,8 @@ namespace OpenMind.Services
                     Inspirer = user.Inspirer,
                     SubscriptionEndDate = user.SubscriptionEndDate,
                     WhyInspired = user.WhyInspired,
-                    Interests = user.Interests.Select(x => x.Interest).ToList()
+                    Interests = user.Interests.Select(x => x.Interest).ToList(),
+                    Successes = successes
                 }
             };
         }
@@ -315,6 +365,24 @@ namespace OpenMind.Services
             };
         }
 
+        public async Task<ServiceActionResult> AddProgressAsync(string email, int sectionNumber, int progress)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new ValidationResult
+                {
+                    Success = false,
+                    StatusCode = 459
+                };
+            }
+
+            user.Progresses.FirstOrDefault(x => x.Section == sectionNumber)!.CompletedAmount += progress;
+
+            return OkServiceActionResult();
+        }
+
         private async Task<AuthActionResult> GenerateAuthenticationResultForUser(UserModel newUser)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -343,7 +411,7 @@ namespace OpenMind.Services
                 JwtId = token.Id,
                 UserId = newUser.Id,
                 CreationDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddDays(2)
+                ExpiryDate = DateTime.UtcNow.AddMonths(6)
             };
 
             await _context.RefreshTokens.AddAsync(refreshToken);
