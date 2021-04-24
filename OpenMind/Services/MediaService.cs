@@ -87,7 +87,7 @@ namespace OpenMind.Services
             {
                 FileName = media.ImageUrl.Substring(media.ImageUrl.LastIndexOf("/") + 1),
                 FilePath = media.ImageUrl,
-                FileType = "images/" + media.ImageUrl.Substring(media.ImageUrl.LastIndexOf(".") + 1),
+                FileType = "image/" + media.ImageUrl.Substring(media.ImageUrl.LastIndexOf(".") + 1),
                 Success = true
             };
         }
