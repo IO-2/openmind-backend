@@ -213,7 +213,7 @@ Response **(application/json)**
 }
 ```
 
-#### `/get-avatar` [PUT] [Token required]
+#### `/get-avatar` [GET] [Token required]
 
 Request **(application/json)**
 
