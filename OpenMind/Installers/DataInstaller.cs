@@ -19,13 +19,13 @@ namespace OpenMind.Installers
             services.AddScoped<IMediaService, MediaService>();
             services.AddScoped<IEmailValidator, EmailValidator>();
             services.AddScoped<IPasswordValidator, PasswordValidator>();
-            services.AddScoped<ICourcesService, CourseService>();
+            services.AddScoped<ICoursesService, CourseService>();
             
             services.AddDbContext<DataContext>(x =>
             {
                 x.UseLazyLoadingProxies()
                     .UseNpgsql(configuration.GetConnectionString("Default"));
-            });
+            }, ServiceLifetime.Singleton); // Make it singleton, so postgresql cant restrict more than 100 connections
 
             services.AddIdentity<UserModel, IdentityRole>(options =>
                 {

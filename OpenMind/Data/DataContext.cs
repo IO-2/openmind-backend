@@ -7,16 +7,23 @@ namespace OpenMind.Data
 {
     public class DataContext : IdentityDbContext<UserModel>
     {
+        // Users
         public DbSet<UserModel> Users { get; set; }
-        public DbSet<CourseModel> Courses { get; set; }
-        public DbSet<CoursePageModel> CoursesPages { get; set; }
-        public DbSet<MediaModel> Media { get; set; }
         public DbSet<UserProgressBySectionModel> UsersProgressBySection { get; set; }
-        public DbSet<UserRateCourseModel> UserRateCourses { get; set; }
         public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
         
-        public DataContext(DbContextOptions<DataContext> options)
-            : base(options)
+        // Courses
+        public DbSet<CourseModel> Courses { get; set; }
+        public DbSet<CourseLessonModel> CoursesPages { get; set; }
+        
+        public DbSet<UserRateCourseModel> UserRateCourses { get; set; }
+        
+        // Media
+        public DbSet<MediaModel> Media { get; set; }
+        
+        
+        
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             Database.EnsureCreated();
         }

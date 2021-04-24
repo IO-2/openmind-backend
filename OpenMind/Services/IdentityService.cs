@@ -294,6 +294,7 @@ namespace OpenMind.Services
             {
                 var result = await SaveFile(_environment.WebRootPath, "Avatars", file);
 
+                user.AvatarUrl = result.SavedFilePath;
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
                 

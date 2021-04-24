@@ -2,7 +2,7 @@ using OpenMind.Services.Interfaces;
 
 namespace OpenMind.Services
 {
-    public class CourseService : FileWorkerService, ICourcesService
+    public class CourseService : FileWorkerService, ICoursesService
     {
         
     }

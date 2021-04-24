@@ -10,6 +10,6 @@ namespace OpenMind.Services
         Task<ServiceActionResult> GetInfo(int id);
         Task<ServiceActionResult> GetFile(int id);
         Task<ServiceActionResult> Delete(int id);
-        Task<ServiceActionResult> GetInfoAll(int page, string locale);
+        Task<ServiceActionResult> GetInfoAll(int? page, string locale);
     }
 }

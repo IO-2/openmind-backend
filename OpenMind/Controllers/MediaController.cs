@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,9 +40,14 @@ namespace OpenMind.Controllers
         
         [HttpGet("get-info-all")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetInfoAll(string locale, int page)
+        public async Task<IActionResult> GetInfoAll(PaginatingSearchRequest request)
         {
-            var result = await _mediaService.GetInfoAll(page, locale);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
+            }
+            
+            var result = await _mediaService.GetInfoAll(request.Page, request.Locale);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
@@ -81,6 +87,11 @@ namespace OpenMind.Controllers
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Create([FromForm] MediaCreateRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
+            }
+            
             var file = request.File.FirstOrDefault();
             var result = await _mediaService.Create(request.Title, request.Text, request.Type, file, request.Locale);
 

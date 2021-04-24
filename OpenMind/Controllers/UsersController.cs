@@ -180,6 +180,7 @@ namespace OpenMind.Controllers
         
         [HttpPost("add-progress")]
         [MapToApiVersion("1.0")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> AddProgress(int sectionNumber, int progress)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

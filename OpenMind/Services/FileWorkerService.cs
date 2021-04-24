@@ -38,7 +38,7 @@ namespace OpenMind.Services
 
         protected async Task<SaveFileResponse> SaveFile(string webRootPath, string folder, IFormFile file)
         {
-            var mediaPath = Path.Combine(webRootPath, "Media");
+            var mediaPath = Path.Combine(webRootPath, folder);
             if (!Directory.Exists(mediaPath))
             {
                 Directory.CreateDirectory(mediaPath);

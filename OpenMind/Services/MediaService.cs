@@ -108,7 +108,7 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> GetInfoAll(int page, string locale)
+        public async Task<ServiceActionResult> GetInfoAll(int? page, string locale)
         {
             var medias = _context.Media
                 .Where(x => x.Locale == locale)
@@ -117,7 +117,14 @@ namespace OpenMind.Services
 
             return new AllMediaActionResult
             {
-                Medias = medias.ToPagedList(page, 20).Select(x => new MediaResponseContract
+                Medias = page == null ? medias.ToPagedList((int)page, 20).Select(x => new MediaResponseContract
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Text = x.Text,
+                    Locale = x.Locale,
+                    Type = x.Type
+                }) : medias.Select(x => new MediaResponseContract
                 {
                     Id = x.Id,
                     Title = x.Title,
