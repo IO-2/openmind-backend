@@ -68,6 +68,7 @@ namespace OpenMind.Services
             {
                 Media = new MediaResponseContract
                 {
+                    Id = media.Id,
                     Title = media.Title,
                     Locale = media.Locale,
                     Text = media.Text,
