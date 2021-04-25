@@ -31,7 +31,8 @@ Response **(application/json)**
 	"title": "Time Management",
 	"locale": "en",
 	"text": "Some text about Time Management",
-	"type": 1
+	"type": 1,
+	"category": 1
 }
 ```
 
@@ -80,9 +81,16 @@ Request **(application/form-data)**
 	"file": Image,
 	"text": String,
 	"locale": String,
-	"type": 1
+	"type": 1,
+	"category": Int
 }
 ```
+
+Categories
+> 1 - ...
+> 2 - ...
+> 3 - ...
+> 4 - ...
 
 Media types
 > 1 - Checklist
@@ -99,12 +107,45 @@ Response **(application/pdf)**
 
 #### `/get-info-all` [GET]
 Sorts by date descending
+Contains 8 media elements from every category
+
+Request **(application/json)**
+
+```swift
+{
+	"locale": String
+}
+```
+
+Response **(application/json)**
+
+```json
+[
+	{
+		"id": 1,
+		"title": "Elon Musk",
+		"type": 3,
+		"locale": "en",
+		"category": 1
+	}
+]
+```
+
+Media types
+> 1 - Checklist
+> 2 - Longread
+> 3 - About cool guys
+
+#### `/get-info-by-category` [GET]
+Sorts by date descending
+Every page contains up to 20 media elements
 
 Request **(application/json)**
 
 ```swift
 {
 	"locale": String,
+	"category": Int,
 	"page": Int
 }
 ```
@@ -116,9 +157,9 @@ Response **(application/json)**
 	{
 		"id": 1,
 		"title": "Elon Musk",
-		"text": "He is the best",
 		"type": 3,
-		"locale": "en"
+		"locale": "en",
+		"category": 1
 	}
 ]
 ```
