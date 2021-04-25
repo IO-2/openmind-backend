@@ -4,9 +4,9 @@ using OpenMind.Models;
 
 namespace OpenMind.Contracts.Requests
 {
-    public class CreateCardsModel
+    public class CreateCardsRequest
     {
         [Required]
-        public IEnumerable<CourseCardModel> Cards { get; set; }
+        public IEnumerable<CourseCardContract> Cards { get; set; }
     }
 }

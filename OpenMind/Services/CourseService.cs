@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OpenMind.Contracts;
 using OpenMind.Contracts.Requests;
 using OpenMind.Domain;
 using OpenMind.Services.Interfaces;
@@ -8,47 +9,47 @@ namespace OpenMind.Services
 {
     public class CourseService : FileWorkerService, ICoursesService
     {
-        public Task<ServiceActionResult> CreateCourseAsync(CreateCourseRequest contract)
+        public async Task<ServiceActionResult> CreateCourseAsync(CreateCourseRequest contract)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> CreateBenefitersAsync(IEnumerable<CreateBenefiterRequest> benefiters)
+        public async Task<ServiceActionResult> CreateBenefitersAsync(IEnumerable<CourseBenefiterContract> benefiters)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> CreateCardsAsync(IEnumerable<CreateCardsModel> cards)
+        public async Task<ServiceActionResult> CreateCardsAsync(IEnumerable<CourseCardContract> cards)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> CreateCourseLessonAsync(CreateCourseLessonRequest contract)
+        public async Task<ServiceActionResult> CreateCourseLessonAsync(CreateCourseLessonRequest contract)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> DeleteCourseAsync(int id)
+        public async Task<ServiceActionResult> DeleteCourseAsync(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> GetForSearchAsync(string local, int page, string query)
+        public async Task<ServiceActionResult> GetForSearchAsync(string local, int page, string query)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> GetCoursePictureAsync(int id)
+        public async Task<ServiceActionResult> GetCoursePictureAsync(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> GetInfoAsync(int id)
+        public async Task<ServiceActionResult> GetInfoAsync(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<ServiceActionResult> GetCourseLessonsInfoPrivilegeAsync(int id)
+        public async Task<ServiceActionResult> GetCourseLessonsInfoPrivilegeAsync(int id)
         {
             throw new System.NotImplementedException();
         }

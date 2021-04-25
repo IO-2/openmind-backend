@@ -15,5 +15,7 @@ namespace OpenMind.Contracts.Requests
         public IFormFileCollection File { get; set; }
         [Required]
         public int Type { get; set; }
+        [Required]
+        public int Category { get; set; }
     }
 }

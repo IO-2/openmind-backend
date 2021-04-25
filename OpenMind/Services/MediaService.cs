@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +18,8 @@ namespace OpenMind.Services
         private readonly IWebHostEnvironment _environment;
         private readonly DataContext _context;
 
+        private int CategoryAmount { get; set; } = 4;
+
         public MediaService(DataContext context, IWebHostEnvironment environment)
         {
             this._environment = environment;
@@ -27,7 +27,7 @@ namespace OpenMind.Services
             base.AllowedFiles = new List<string> {"image/png", "image/jpg", "image/jpeg"};
         }
         
-        public async Task<ServiceActionResult> CreateAsync(string name, string text, int type, IFormFile file, string locale)
+        public async Task<ServiceActionResult> CreateAsync(string name, string text, int type, IFormFile file, string locale, int category)
         {
             try
             {
@@ -42,7 +42,8 @@ namespace OpenMind.Services
                         Locale = locale,
                         Text = text,
                         Type = type,
-                        UploadedTime = DateTimeOffset.Now.ToUnixTimeSeconds()
+                        UploadedTime = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                        Category = category
                     });
                     await _context.SaveChangesAsync();
                     return OkServiceActionResult();
@@ -63,13 +64,15 @@ namespace OpenMind.Services
                 return BadServiceActionResult($"Media with id {id} not found");
             }
 
-            return new MediaActionResult()
+            return new MediaActionResult
             {
                 Media = new MediaResponseContract
                 {
                     Title = media.Title,
                     Locale = media.Locale,
-                    Text = media.Text
+                    Text = media.Text,
+                    Type = media.Type,
+                    Category = media.Category
                 },
                 Success = true
             };
@@ -108,32 +111,61 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> GetInfoAllAsync(int? page, string locale)
+        public async Task<ServiceActionResult> GetInfoAllAsync(string locale)
         {
-            var medias = _context.Media
-                .Where(x => x.Locale == locale)
-                .OrderBy(x => x.UploadedTime)
-                .Reverse();
-
-            return new AllMediaActionResult
+            var resultMedias = new List<MediaModel>();
+            for (int i = 1; i <= CategoryAmount; i++)
             {
-                Medias = page == null ? medias.ToPagedList((int)page, 20).Select(x => new MediaResponseContract
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Text = x.Text,
-                    Locale = x.Locale,
-                    Type = x.Type
-                }) : medias.Select(x => new MediaResponseContract
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Text = x.Text,
-                    Locale = x.Locale,
-                    Type = x.Type
-                }),
+                var medias = _context.Media
+                    .Where(x => x.Locale == locale && x.Category == i)
+                    .Take(8);
+                
+                resultMedias.AddRange(medias);
+            }
+
+            resultMedias = resultMedias
+                .OrderBy(x => x.UploadedTime)
+                .Reverse()
+                .ToList();
+            
+            var result = new PaginatingResponse<BriefMediaResponseContract>
+            {
+                Page = resultMedias.Select(x => new BriefMediaResponseContract
+                    {
+                        Id = x.Id,
+                        Title = x.Title,
+                        Locale = x.Locale,
+                        Type = x.Type,
+                        Category = x.Category
+                    }).ToList(),
                 Success = true
             };
+            
+            return result;
+        }
+
+        public async Task<ServiceActionResult> GetInfoByCategory(int page, int category, string locale)
+        {
+            var medias = _context.Media
+                .Where(x => x.Locale == locale && x.Category == category)
+                .OrderBy(x => x.UploadedTime)
+                .Reverse()
+                .ToList();
+            
+            var result = new PaginatingResponse<BriefMediaResponseContract>
+            {
+                Page = medias.Select(x => new BriefMediaResponseContract
+                    {
+                        Id = x.Id,
+                        Title = x.Title,
+                        Locale = x.Locale,
+                        Type = x.Type,
+                        Category = x.Category
+                    }).ToList(),
+                Success = true
+            };
+            
+            return result;
         }
     }
 }

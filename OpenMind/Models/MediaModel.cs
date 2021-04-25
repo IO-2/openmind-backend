@@ -8,5 +8,6 @@ namespace OpenMind.Models
         public string ImageUrl { get; set; }
         public int Type { get; set; }
         public long UploadedTime { get; set; }
+        public int Category { get; set; }
     }
 }

@@ -40,20 +40,38 @@ namespace OpenMind.Controllers
         
         [HttpGet("get-info-all")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetInfoAll(PaginatingSearchRequest request)
+        public async Task<IActionResult> GetInfoAll(string locale)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
             }
             
-            var result = await _mediaService.GetInfoAllAsync(request.Page, request.Locale);
+            var result = await _mediaService.GetInfoAllAsync(locale);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as AllMediaActionResult).Medias);
+            return Ok((result as PaginatingResponse<BriefMediaResponseContract>).Page);
+        }
+        
+        [HttpGet("get-info-by-category")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetInfoAll([FromQuery] PaginatingSearchRequest request, int category)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
+            }
+            
+            var result = await _mediaService.GetInfoByCategory(request.Page, category, request.Locale);
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok((result as PaginatingResponse<BriefMediaResponseContract>).Page);
         }
         
         [HttpGet("get-file")]
@@ -93,7 +111,7 @@ namespace OpenMind.Controllers
             }
             
             var file = request.File.FirstOrDefault();
-            var result = await _mediaService.CreateAsync(request.Title, request.Text, request.Type, file, request.Locale);
+            var result = await _mediaService.CreateAsync(request.Title, request.Text, request.Type, file, request.Locale, request.Category);
 
             if (!result.Success)
             {
