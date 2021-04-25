@@ -18,6 +18,6 @@ namespace OpenMind.Domain.Courses
         public int CourseDuration { get; set; }
         public IEnumerable<CourseCardResult> Cards { get; set; }
         public IEnumerable<CourseBenefiterResult> Benefiters { get; set; }
-        public IEnumerable<CourseLessonResult> Lessons { get; set; }
+        public IEnumerable<BriefCourseLessonResult> Lessons { get; set; }
     }
 }

@@ -241,7 +241,7 @@ namespace OpenMind.Services
                         Text = x.Text,
                         Title = x.Title
                     }),
-                    Lessons = course.Lessons.Select(x => new CourseLessonResult
+                    Lessons = course.Lessons.Select(x => new BriefCourseLessonResult
                     {
                         LessonNumber = x.LessonNumber,
                         Title = x.Title
@@ -263,7 +263,24 @@ namespace OpenMind.Services
 
         public async Task<ServiceActionResult> GetCourseLessonsInfoPrivilegeAsync(int id)
         {
-            throw new System.NotImplementedException();
+            var course = _context.Courses.FirstOrDefault(x => x.Id == id);
+            if (course is null)
+            {
+                return BadServiceActionResult("Course not found");
+            }
+
+            return new ListResponse<CourseLessonResult>
+            {
+                Success = true,
+                Data = course.Lessons.Select(x => new CourseLessonResult
+                {
+                    CourseId = course.Id,
+                    Description = x.Description,
+                    LessonNumber = x.LessonNumber,
+                    Title = x.Title,
+                    VideoUrl = x.VideoUrl
+                }).ToList()
+            };
         }
     }
 }
