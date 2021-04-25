@@ -4,12 +4,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Requests.Users;
-using OpenMind.Contracts.Responses;
 using OpenMind.Contracts.Responses.Users;
 using OpenMind.Domain;
 using OpenMind.Domain.Users;
@@ -18,9 +14,7 @@ using StatusCodeResult = OpenMind.Domain.StatusCodeResult;
 
 namespace OpenMind.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : MyControllerBase
     {
         private readonly IIdentityService _identityService;
         

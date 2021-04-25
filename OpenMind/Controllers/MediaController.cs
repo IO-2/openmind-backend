@@ -1,19 +1,11 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using OpenMind.Contracts;
 using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Requests.Media;
 using OpenMind.Contracts.Responses;
 using OpenMind.Domain;
 using OpenMind.Domain.Media;
-using OpenMind.Services;
 using OpenMind.Services.Interfaces;
 
 namespace OpenMind.Controllers

@@ -1,4 +1,3 @@
-using OpenMind.Contracts.Responses;
 using OpenMind.Contracts.Responses.Users;
 
 namespace OpenMind.Domain.Users

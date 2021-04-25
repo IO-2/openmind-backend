@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OpenMind.Contracts;
-using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Requests.Courses;
 using OpenMind.Domain;
 

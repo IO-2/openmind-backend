@@ -1,12 +1,8 @@
-using System;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Requests.Courses;
-using OpenMind.Contracts.Responses;
 using OpenMind.Domain;
 using OpenMind.Domain.Courses;
 using OpenMind.Services.Interfaces;
@@ -28,6 +24,7 @@ namespace OpenMind.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
         {
+            // TODO: Add only admin access
             var result = await _coursesService.CreateCourseAsync(request);
 
             if (!result.Success)
@@ -71,7 +68,7 @@ namespace OpenMind.Controllers
         [HttpPost("create-course-lesson")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> CreateCourse([FromBody] CreateCourseLessonRequest request)
+        public async Task<IActionResult> CreateCourseLesson([FromBody] CreateCourseLessonRequest request)
         {
             var result = await _coursesService.CreateCourseLessonAsync(request);
 
@@ -125,6 +122,35 @@ namespace OpenMind.Controllers
 
             var fileResult = result as FileActionResult;
             return PhysicalFile(fileResult.FilePath, fileResult.FileType, fileResult.FileName);
+        }
+        
+        [HttpGet("get-info")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> GetInfo(int id)
+        {
+            var result = await _coursesService.GetInfoAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok((result as SingleObjectResult<CourseResult>).Data);
+        }
+        
+        [HttpGet("get-course-lessons-info-privilege")]
+        [MapToApiVersion("1.0")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetCourseLessonsInfoPrivilege(int id)
+        {
+            var result = await _coursesService.GetCourseLessonsInfoPrivilegeAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok((result as ListResponse<CourseResult>).Data);
         }
     }
 }

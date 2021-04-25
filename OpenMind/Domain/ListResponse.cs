@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using OpenMind.Contracts.Responses;
-using PagedList.Core;
 
 namespace OpenMind.Domain
 {

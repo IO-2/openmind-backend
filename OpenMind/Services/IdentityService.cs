@@ -1,9 +1,7 @@
 #nullable enable
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -12,21 +10,15 @@ using Castle.Core.Internal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using OpenMind.Contracts.Responses;
 using OpenMind.Contracts.Responses.Users;
 using OpenMind.Data;
 using OpenMind.Domain;
 using OpenMind.Domain.Users;
-using OpenMind.Models;
 using OpenMind.Models.Users;
 using OpenMind.Options;
 using OpenMind.Services.Interfaces;
-using OpenMind.Services.Validators;
 using OpenMind.Services.Validators.Interfaces;
 using StatusCodeResult = OpenMind.Domain.StatusCodeResult;
 
@@ -231,6 +223,7 @@ namespace OpenMind.Services
             {
                 return new AuthActionResult
                 {
+                    Success = false,
                     Errors = new[] {"User does not exists"}
                 };
             }

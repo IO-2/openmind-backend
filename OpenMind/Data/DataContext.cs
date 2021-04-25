@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using OpenMind.Domain;
-using OpenMind.Models;
 using OpenMind.Models.Courses;
 using OpenMind.Models.Media;
 using OpenMind.Models.Users;
@@ -23,9 +21,7 @@ namespace OpenMind.Data
         
         // Media
         public DbSet<MediaModel> Media { get; set; }
-        
-        
-        
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             Database.EnsureCreated();

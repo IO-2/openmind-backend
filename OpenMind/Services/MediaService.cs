@@ -5,15 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using OpenMind.Contracts.Responses;
 using OpenMind.Contracts.Responses.Media;
 using OpenMind.Data;
 using OpenMind.Domain;
 using OpenMind.Domain.Media;
-using OpenMind.Models;
 using OpenMind.Models.Media;
 using OpenMind.Services.Interfaces;
-using PagedList.Core;
 
 namespace OpenMind.Services
 {

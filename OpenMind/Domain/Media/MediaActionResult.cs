@@ -1,4 +1,3 @@
-using OpenMind.Contracts.Responses;
 using OpenMind.Contracts.Responses.Media;
 
 namespace OpenMind.Domain.Media

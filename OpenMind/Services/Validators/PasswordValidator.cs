@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using OpenMind.Models;
 using OpenMind.Services.Validators.Interfaces;
 
 namespace OpenMind.Services.Validators

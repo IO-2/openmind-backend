@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenMind.Data;
-using OpenMind.Models;
 using OpenMind.Models.Users;
 using OpenMind.Services;
 using OpenMind.Services.Interfaces;
