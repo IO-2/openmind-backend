@@ -507,6 +507,7 @@ Response **(application/json)**
 {
 	"title": String,
 	"videoUrl": String,
+	"uploadedTime": Long,
 	"description": String,
 	"lessonsDescription": String,
 	"lessonsNumber": Int,
@@ -516,18 +517,22 @@ Response **(application/json)**
 	"section": Int,
 	"courseDuration": Int,
 	"locale": String,
-	"cards": {
-		"id": Int,
-		"cardNumber": Int,
-		"title": String,
-		"text": String
-	},
-	"benefiters": {
-		"id": Int,
-		"benefiterNumber": Int,
-		"title": String,
-		"text": String
-	},
+	"cards": [
+		{
+			"id": Int,
+			"cardNumber": Int,
+			"title": String,
+			"text": String
+		}
+	],
+	"benefiters": [
+		{
+			"id": Int,
+			"benefiterNumber": Int,
+			"title": String,
+			"text": String
+		}
+	],
 	"lessons": [
 		{
 			"title": String,
