@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OpenMind.Domain;
 using OpenMind.Models;
+using OpenMind.Models.Courses;
+using OpenMind.Models.Media;
+using OpenMind.Models.Users;
 
 namespace OpenMind.Data
 {
@@ -50,6 +53,26 @@ namespace OpenMind.Data
             modelBuilder.Entity<UserRateCourseModel>()
                 .HasOne(p => p.User)
                 .WithMany(t => t.UserRatresCources)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<UserRateCourseModel>()
+                .HasOne(p => p.Course)
+                .WithMany(t => t.Rates)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<CourseCardModel>()
+                .HasOne(p => p.Course)
+                .WithMany(t => t.Cards)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<CourseBenefitersModel>()
+                .HasOne(p => p.Course)
+                .WithMany(t => t.Benefiters)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<CourseLessonModel>()
+                .HasOne(p => p.Course)
+                .WithMany(t => t.Lessons)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

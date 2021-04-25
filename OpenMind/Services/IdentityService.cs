@@ -18,13 +18,17 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OpenMind.Contracts.Responses;
+using OpenMind.Contracts.Responses.Users;
 using OpenMind.Data;
 using OpenMind.Domain;
+using OpenMind.Domain.Users;
 using OpenMind.Models;
+using OpenMind.Models.Users;
 using OpenMind.Options;
 using OpenMind.Services.Interfaces;
 using OpenMind.Services.Validators;
 using OpenMind.Services.Validators.Interfaces;
+using StatusCodeResult = OpenMind.Domain.StatusCodeResult;
 
 namespace OpenMind.Services
 {
@@ -58,7 +62,7 @@ namespace OpenMind.Services
 
             if (existingUser != null)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = 456
@@ -100,7 +104,7 @@ namespace OpenMind.Services
             var createdUser = await _userManager.CreateAsync(newUser, password);
             if (!createdUser.Succeeded)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     StatusCode = 455
                 };
@@ -121,7 +125,7 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = 459
@@ -132,7 +136,7 @@ namespace OpenMind.Services
 
             if (!userHasValidPassword)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = 458
@@ -280,7 +284,7 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = 459,
@@ -313,7 +317,7 @@ namespace OpenMind.Services
             int validationCode = await _emailValidator.ValidateAsync(email);
             if (validationCode != 200)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = validationCode
@@ -329,7 +333,7 @@ namespace OpenMind.Services
 
             var success = result == 200;
 
-            return new ValidationResult
+            return new StatusCodeResult
             {
                 Success = success,
                 StatusCode = result
@@ -342,7 +346,7 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = 459
@@ -372,7 +376,7 @@ namespace OpenMind.Services
 
             if (user == null)
             {
-                return new ValidationResult
+                return new StatusCodeResult
                 {
                     Success = false,
                     StatusCode = 459

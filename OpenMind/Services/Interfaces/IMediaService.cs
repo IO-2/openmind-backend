@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using OpenMind.Domain;
 
-namespace OpenMind.Services
+namespace OpenMind.Services.Interfaces
 {
     public interface IMediaService
     {

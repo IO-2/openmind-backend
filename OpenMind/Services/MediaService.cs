@@ -6,9 +6,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OpenMind.Contracts.Responses;
+using OpenMind.Contracts.Responses.Media;
 using OpenMind.Data;
 using OpenMind.Domain;
+using OpenMind.Domain.Media;
 using OpenMind.Models;
+using OpenMind.Models.Media;
+using OpenMind.Services.Interfaces;
 using PagedList.Core;
 
 namespace OpenMind.Services
@@ -129,9 +133,9 @@ namespace OpenMind.Services
                 .Reverse()
                 .ToList();
             
-            var result = new PaginatingResponse<BriefMediaResponseContract>
+            var result = new ListResponse<BriefMediaResult>
             {
-                Page = resultMedias.Select(x => new BriefMediaResponseContract
+                Data = resultMedias.Select(x => new BriefMediaResult
                     {
                         Id = x.Id,
                         Title = x.Title,
@@ -153,9 +157,9 @@ namespace OpenMind.Services
                 .Reverse()
                 .ToList();
             
-            var result = new PaginatingResponse<BriefMediaResponseContract>
+            var result = new ListResponse<BriefMediaResult>
             {
-                Page = medias.Select(x => new BriefMediaResponseContract
+                Data = medias.Select(x => new BriefMediaResult
                     {
                         Id = x.Id,
                         Title = x.Title,

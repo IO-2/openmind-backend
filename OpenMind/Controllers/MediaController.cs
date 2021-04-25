@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using OpenMind.Contracts;
 using OpenMind.Contracts.Requests;
+using OpenMind.Contracts.Requests.Media;
 using OpenMind.Contracts.Responses;
 using OpenMind.Domain;
+using OpenMind.Domain.Media;
 using OpenMind.Services;
+using OpenMind.Services.Interfaces;
 
 namespace OpenMind.Controllers
 {
@@ -53,25 +56,25 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as PaginatingResponse<BriefMediaResponseContract>).Page);
+            return Ok((result as ListResponse<BriefMediaResult>).Data);
         }
         
         [HttpGet("get-info-by-category")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetInfoAll([FromQuery] PaginatingSearchRequest request, int category)
+        public async Task<IActionResult> GetInfoAll(int page, string locale, int category)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
             }
             
-            var result = await _mediaService.GetInfoByCategory(request.Page, category, request.Locale);
+            var result = await _mediaService.GetInfoByCategory(page, category, locale);
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as PaginatingResponse<BriefMediaResponseContract>).Page);
+            return Ok((result as ListResponse<BriefMediaResult>).Data);
         }
         
         [HttpGet("get-file")]

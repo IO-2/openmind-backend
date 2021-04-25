@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenMind.Contracts.Requests;
+using OpenMind.Contracts.Requests.Courses;
 using OpenMind.Contracts.Responses;
 using OpenMind.Domain;
+using OpenMind.Domain.Courses;
 using OpenMind.Services.Interfaces;
 
 namespace OpenMind.Controllers
@@ -98,16 +100,16 @@ namespace OpenMind.Controllers
         
         [HttpGet("get-for-search")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetForSearch(PaginatingSearchRequest request)
+        public async Task<IActionResult> GetForSearch(string locale, int page, string query)
         {
-            var result = await _coursesService.GetForSearchAsync(request.Locale, request.Page, request.Query);
+            var result = await _coursesService.GetForSearchAsync(locale, page, query);
 
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as PaginatingResponse<BriefCourseResponseContract>).Page);
+            return Ok((result as ListResponse<BriefCourseResult>).Data);
         }
         
         [HttpGet("get-course-picture")]

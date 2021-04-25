@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Contracts\Responses\Courses" />
       <Folder Include="Helpers" />
       <Folder Include="Migrations" />
       <Folder Include="wwwroot" />

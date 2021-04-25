@@ -8,10 +8,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpenMind.Contracts.Requests;
+using OpenMind.Contracts.Requests.Users;
 using OpenMind.Contracts.Responses;
+using OpenMind.Contracts.Responses.Users;
 using OpenMind.Domain;
+using OpenMind.Domain.Users;
 using OpenMind.Services.Interfaces;
-using ValidationResult = OpenMind.Domain.ValidationResult;
+using StatusCodeResult = OpenMind.Domain.StatusCodeResult;
 
 namespace OpenMind.Controllers
 {
@@ -69,9 +72,9 @@ namespace OpenMind.Controllers
 
             if (!result.Success)
             {
-                if (result is ValidationResult)
+                if (result is StatusCodeResult)
                 {
-                    return StatusCode((result as ValidationResult).StatusCode);
+                    return StatusCode((result as StatusCodeResult).StatusCode);
                 }
                 return BadRequest(result.Errors);
             }
@@ -102,22 +105,22 @@ namespace OpenMind.Controllers
             var emailVerificationResult = await _identityService.IsEmailValidAsync(request.Email);
             if (!emailVerificationResult.Success)
             {
-                return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
+                return StatusCode((emailVerificationResult as StatusCodeResult).StatusCode);
             }
 
             var passwordValidationResult = await _identityService.IsPasswordValidAsync(request.Password);
             if (!passwordValidationResult.Success)
             {
-                return StatusCode((passwordValidationResult as ValidationResult).StatusCode);
+                return StatusCode((passwordValidationResult as StatusCodeResult).StatusCode);
             }
             
             var result = await _identityService.RegisterAsync(request.Email, request.Name, request.Password, request.DreamingAbout, request.Inspirer, request.WhyInspired, request.Interests);
 
             if (!result.Success)
             {
-                if (result is ValidationResult)
+                if (result is StatusCodeResult)
                 {
-                    return StatusCode((result as ValidationResult).StatusCode);
+                    return StatusCode((result as StatusCodeResult).StatusCode);
                 }
                 return BadRequest(result.Errors);
             }
@@ -156,16 +159,16 @@ namespace OpenMind.Controllers
             var emailVerificationResult = await _identityService.IsEmailValidAsync(request.Email);
             if (!emailVerificationResult.Success)
             {
-                return StatusCode((emailVerificationResult as ValidationResult).StatusCode);
+                return StatusCode((emailVerificationResult as StatusCodeResult).StatusCode);
             }
             
             var result = await _identityService.LoginAsync(request.Email, request.Password);
 
             if (!result.Success)
             {
-                if (result is ValidationResult)
+                if (result is StatusCodeResult)
                 {
-                    return StatusCode((result as ValidationResult).StatusCode);
+                    return StatusCode((result as StatusCodeResult).StatusCode);
                 }
                 return BadRequest(result.Errors);
             }
@@ -188,9 +191,9 @@ namespace OpenMind.Controllers
 
             if (!result.Success)
             {
-                if (result is ValidationResult)
+                if (result is StatusCodeResult)
                 {
-                    return StatusCode((result as ValidationResult).StatusCode);
+                    return StatusCode((result as StatusCodeResult).StatusCode);
                 }
                 return BadRequest(result.Errors);
             }
