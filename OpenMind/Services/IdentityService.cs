@@ -35,6 +35,9 @@ namespace OpenMind.Services
         private readonly IValidator _emailValidator;
         private readonly IValidator _passwordValidator;
 
+        protected override IList<string> AllowedFiles { get; set; } = new List<string>{ "image/jpeg", "image/png", "image/jpg" };
+        protected override string ContentsFolderName { get; set; } = "Avatars";
+
         public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment, IEmailValidator emailValidator, IPasswordValidator passwordValidator)
         {
             this._userManager = userManager;
@@ -44,8 +47,6 @@ namespace OpenMind.Services
             this._environment = environment;
             this._emailValidator = emailValidator;
             this._passwordValidator = passwordValidator;
-            
-            base.AllowedFiles = new List<string>{ "image/jpeg", "image/png", "image/jpg" };
         }
 
         public async Task<ServiceActionResult> RegisterAsync(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired, ICollection<int> interests)
@@ -266,7 +267,8 @@ namespace OpenMind.Services
                     SubscriptionEndDate = user.SubscriptionEndDate,
                     WhyInspired = user.WhyInspired,
                     Interests = user.Interests.Select(x => x.Interest).ToList(),
-                    Successes = successes
+                    Successes = successes,
+                    AvatarUrl = user.AvatarUrl
                 }
             };
         }
@@ -289,7 +291,7 @@ namespace OpenMind.Services
             
             try
             {
-                var result = await SaveFile(_environment.WebRootPath, "Avatars", file);
+                var result = await SaveFile(_environment.WebRootPath, ContentsFolderName, file);
 
                 user.AvatarUrl = result.SavedFilePath;
                 _context.Users.Update(user);

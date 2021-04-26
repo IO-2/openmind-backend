@@ -22,11 +22,13 @@ namespace OpenMind.Services
 
         private int CategoryAmount { get; set; } = 4;
 
+        protected override string ContentsFolderName { get; set; } = "Media";
+        protected override IList<string> AllowedFiles { get; set; } = new List<string> {"image/png", "image/jpg", "image/jpeg"};
+
         public MediaService(DataContext context, IWebHostEnvironment environment)
         {
             this._environment = environment;
             this._context = context;
-            base.AllowedFiles = new List<string> {"image/png", "image/jpg", "image/jpeg"};
         }
         
         public async Task<ServiceActionResult> CreateAsync(string name, string text, int type, IFormFile file, string locale, int category)
@@ -35,7 +37,7 @@ namespace OpenMind.Services
             {
                 if (file.Length > 0 && AllowedFiles.Contains(file.ContentType))
                 {
-                    var result = await SaveFile(_environment.WebRootPath, "Media", file);
+                    var result = await SaveFile(_environment.WebRootPath, ContentsFolderName, file);
                     
                     _context.Media.Add(new MediaModel
                     {
@@ -76,7 +78,8 @@ namespace OpenMind.Services
                     Text = media.Text,
                     Type = media.Type,
                     Category = media.Category,
-                    UploadedTime = media.UploadedTime
+                    UploadedTime = media.UploadedTime,
+                    ImageUrl = media.ImageUrl
                 },
                 Success = true
             };
@@ -141,7 +144,8 @@ namespace OpenMind.Services
                         Locale = x.Locale,
                         Type = x.Type,
                         Category = x.Category,
-                        UploadedTime = x.UploadedTime
+                        UploadedTime = x.UploadedTime,
+                        ImageUrl = x.ImageUrl
                     }).ToList(),
                 Success = true
             };
@@ -164,7 +168,8 @@ namespace OpenMind.Services
                 Locale = x.Locale,
                 Type = x.Type,
                 Category = x.Category,
-                UploadedTime = x.UploadedTime
+                UploadedTime = x.UploadedTime,
+                ImageUrl = x.ImageUrl
             }).AsQueryable(); // AsQueryable is very important in this context. Causes error without it
             var paged = selected.ToPagedList(page, 20);
             var listed = paged.ToList();
