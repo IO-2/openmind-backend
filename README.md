@@ -3,7 +3,7 @@
 If any request ends up with errors, they will be sent by plain text
 Access token should be sent in headers for requests with **[Token required]** mark
 Header example:
-```json
+```swift
 {
 	"version": "1.0",
 	"Authorization": "bearer {ACCESS TOKEN HERE}"
@@ -26,14 +26,16 @@ Request **(application/json)**
 ```
 Response **(application/json)**
 
-```json
+```swift
 {
-	"title": "Time Management",
-	"locale": "en",
-	"text": "Some text about Time Management",
-	"type": 1,
-	"category": 1,
-	"uploadedTime": 1629384
+	"title": String,
+	"locale": String,
+	"text": String,
+	"type": Int,
+	"category": Int,
+	"uploadedTime": Long,
+	[UPDATE]
+	"imageUrl": String
 }
 ```
 
@@ -41,7 +43,7 @@ Media types
 > 1 - Checklist
 > 2 - Longread
 > 3 - About cool guys
-
+[DEPRECATED]
 #### `/get-file` [GET]
 Request **(application/json)**
 
@@ -67,9 +69,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -82,8 +84,9 @@ Request **(application/form-data)**
 	"file": Image,
 	"text": String,
 	"locale": String,
-	"type": 1,
-	"category": Int
+	"type": Int,
+	"category": Int,
+	"uploadedTime": Long
 }
 ```
 
@@ -100,9 +103,9 @@ Media types
 
 Response **(application/pdf)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -120,15 +123,17 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 [
 	{
-		"id": 1,
-		"title": "Elon Musk",
-		"type": 3,
-		"locale": "en",
-		"category": 1,
-		"uploadedTime": 1629384
+		"id": Int,
+		"title": String,
+		"type": Int,
+		"locale": String,
+		"category": Int,
+		"uploadedTime": Long,
+		[UPDATE]
+		"imageUrl": String
 	}
 ]
 ```
@@ -154,14 +159,17 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 [
 	{
-		"id": 1,
-		"title": "Elon Musk",
-		"type": 3,
-		"locale": "en",
-		"category": 1
+		"id": Int,
+		"title": String,
+		"type": Int,
+		"locale": String,
+		"category": Int,
+		"uploadedTime": Long,
+		[UPDATE]
+		"imageUrl": String
 	}
 ]
 ```
@@ -191,7 +199,7 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
 	"token": "string of nonsense",
 	"refreshToken": "another string of nonsense"
@@ -216,7 +224,7 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
 	"token": "string of nonsense",
 	"refreshToken": "another string of nonsense"
@@ -240,7 +248,7 @@ Request **(application/json)**
 ```
 Response **(application/json)**
 
-```json
+```swift
 {
 	"token": "string of nonsense",
 	"refreshToken": "another string of nonsense"
@@ -258,20 +266,22 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"name": null,
-	"email": "art3a@niuitmo.ru",
-	"dreamingAbout": "Bed",
-	"inspirer": "Tamerlan Vstaldualdibom",
-	"whyInspired": "gay came out last month",
-	"subscriptionEndDate": "0001-01-01T00:00:00",
+	"name": String,
+	"email": String,
+	"dreamingAbout": String,
+	"inspirer": String,
+	"whyInspired": String,
+	"subscriptionEndDate": Long,
 	"successes": {
-		"1": 0.2,
-		"2": 0.3,
-		"3": 0.0,
-		"4": 0.7
-	}
+		"1": Float,
+		"2": Float,
+		"3": Float,
+		"4": Float
+	},
+	[UPDATE]
+	"avatarUrl": String
 }
 ```
 
@@ -287,9 +297,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -300,12 +310,12 @@ Request **(application/form-data)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
-
+*[DEPRECATED]*
 #### `/get-avatar` [PUT] [Token required]
 
 Request **(application/json)**
@@ -328,9 +338,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -353,7 +363,9 @@ Request **(application/form-data)**
 	"speakerName": String,
 	"section": Int,
 	"courseDuration": Int,
-	"locale": String
+	"locale": String,
+	[UPDATE]
+	"imageUrl": String
 }
 ```
 
@@ -361,7 +373,7 @@ Request **(application/form-data)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
 	"success": true,
 	"id": 1
@@ -387,9 +399,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -410,9 +422,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -432,9 +444,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -449,9 +461,9 @@ Request **(application/json)**
 
 Response **(application/json)**
 
-```json
+```swift
 {
-	"success": true
+	"success": Bool
 }
 ```
 
@@ -474,11 +486,13 @@ Response **(application/json)**
 	{
 		"id": Int,
 		"title": String,
-		"section": Int
+		"section": Int,
+		[UPDATE]
+		"imageUrl": String
 	}
 ]
 ```
-
+*[DEPRECATED]*
 #### `/get-course-picture` [GET]
 
 Request **(application/json)**
@@ -540,7 +554,9 @@ Response **(application/json)**
 			"title": String,
 			"lessonNumber": Int
 		}
-	]
+	],
+	[UPDATE]
+	"iamgeUrl": String
 }
 ```
 
