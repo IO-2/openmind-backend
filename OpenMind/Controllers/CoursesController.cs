@@ -22,7 +22,7 @@ namespace OpenMind.Controllers
         [HttpPost("create-course")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
+        public async Task<IActionResult> CreateCourse([FromForm] CreateCourseRequest request)
         {
             // TODO: Add only admin access
             var result = await _coursesService.CreateCourseAsync(request);
@@ -106,7 +106,7 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as ListResponse<BriefCourseResult>).Data);
+            return Ok((result as ListResponse<CourseThumbnailResult>).Data);
         }
         
         [HttpGet("get-course-picture")]

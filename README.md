@@ -32,7 +32,8 @@ Response **(application/json)**
 	"locale": "en",
 	"text": "Some text about Time Management",
 	"type": 1,
-	"category": 1
+	"category": 1,
+	"uploadedTime": 1629384
 }
 ```
 
@@ -126,7 +127,8 @@ Response **(application/json)**
 		"title": "Elon Musk",
 		"type": 3,
 		"locale": "en",
-		"category": 1
+		"category": 1,
+		"uploadedTime": 1629384
 	}
 ]
 ```

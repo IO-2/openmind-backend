@@ -46,7 +46,7 @@ namespace OpenMind
 	    app.UseStaticFiles();
 
 	    app.UseCors(MyAllowSpecificOrigins);
-            
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
