@@ -9,5 +9,6 @@ namespace OpenMind.Contracts.Responses.Media
         public string Text { get; set; }
         public int Type { get; set; }
         public int Category { get; set; }
+        public long UploadedTime { get; set; }
     }
 }

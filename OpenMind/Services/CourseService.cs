@@ -23,6 +23,7 @@ namespace OpenMind.Services
         {
             _environment = environment;
             _context = context;
+            AllowedFiles = new List<string> {"image/png", "image/jpg", "image/jpeg"};
         }
 
         public async Task<ServiceActionResult> CreateCourseAsync(CreateCourseRequest contract)
@@ -171,7 +172,7 @@ namespace OpenMind.Services
         public async Task<ServiceActionResult> GetForSearchAsync(string locale, int page, string query)
         {
             var courses = _context.Courses
-                .Where(x => x.Locale == locale && x.Title.Contains(query))
+                .Where(x => x.Locale != locale || query == null || x.Title.Contains(query))
                 .OrderBy(x => x.UploadedTime)
                 .Reverse()
                 .ToList();
@@ -185,6 +186,7 @@ namespace OpenMind.Services
                         Section = x.Section,
                         Title = x.Title
                     })
+                    .AsQueryable()
                     .ToPagedList(page, 20)
                     .ToList()
             };

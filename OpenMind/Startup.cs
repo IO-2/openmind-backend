@@ -40,7 +40,7 @@ namespace OpenMind
             }
 
             app.UseRouting();
-            
+
             app.UseCors(MyAllowSpecificOrigins);
             
             app.UseForwardedHeaders(new ForwardedHeadersOptions

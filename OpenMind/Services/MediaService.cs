@@ -11,6 +11,7 @@ using OpenMind.Domain;
 using OpenMind.Domain.Media;
 using OpenMind.Models.Media;
 using OpenMind.Services.Interfaces;
+using PagedList.Core;
 
 namespace OpenMind.Services
 {
@@ -74,7 +75,8 @@ namespace OpenMind.Services
                     Locale = media.Locale,
                     Text = media.Text,
                     Type = media.Type,
-                    Category = media.Category
+                    Category = media.Category,
+                    UploadedTime = media.UploadedTime
                 },
                 Success = true
             };
@@ -138,7 +140,8 @@ namespace OpenMind.Services
                         Title = x.Title,
                         Locale = x.Locale,
                         Type = x.Type,
-                        Category = x.Category
+                        Category = x.Category,
+                        UploadedTime = x.UploadedTime
                     }).ToList(),
                 Success = true
             };
@@ -153,17 +156,22 @@ namespace OpenMind.Services
                 .OrderBy(x => x.UploadedTime)
                 .Reverse()
                 .ToList();
+
+            var selected = medias.Select(x => new BriefMediaResult
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Locale = x.Locale,
+                Type = x.Type,
+                Category = x.Category,
+                UploadedTime = x.UploadedTime
+            }).AsQueryable(); // AsQueryable is very important in this context. Causes error without it
+            var paged = selected.ToPagedList(page, 20);
+            var listed = paged.ToList();
             
             var result = new ListResponse<BriefMediaResult>
             {
-                Data = medias.Select(x => new BriefMediaResult
-                    {
-                        Id = x.Id,
-                        Title = x.Title,
-                        Locale = x.Locale,
-                        Type = x.Type,
-                        Category = x.Category
-                    }).ToList(),
+                Data = listed,
                 Success = true
             };
             
