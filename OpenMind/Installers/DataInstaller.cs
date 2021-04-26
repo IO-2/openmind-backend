@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +26,7 @@ namespace OpenMind.Installers
             {
                 x.UseLazyLoadingProxies()
                     .UseNpgsql(configuration.GetConnectionString("Default"));
-            }, ServiceLifetime.Singleton); // Make it singleton, so postgresql cant restrict more than 100 connections
+            }); 
 
             services.AddIdentity<UserModel, IdentityRole>(options =>
                 {
