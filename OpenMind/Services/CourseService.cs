@@ -51,7 +51,7 @@ namespace OpenMind.Services
                     }   
                 }
                 
-                _context.Courses.Add(new CourseModel
+                var course =  _context.Courses.Add(new CourseModel
                 {
                     Title = contract.Title,
                     VideoUrl = contract.VideoUrl,
@@ -68,7 +68,11 @@ namespace OpenMind.Services
                     UploadedTime = DateTimeOffset.Now.ToUnixTimeSeconds()
                 });
                 await _context.SaveChangesAsync();
-                return OkServiceActionResult();
+                return new IdResult
+                {
+                    Success = true,
+                    Id = course.Entity.Id
+                };
             }
             catch (Exception e)
             {
