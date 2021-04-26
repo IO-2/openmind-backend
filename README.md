@@ -554,7 +554,9 @@ Response **(application/json)**
 			"title": String,
 			"lessonNumber": Int
 		}
-	]
+	],
+	[UPDATE]
+	"iamgeUrl": String
 }
 ```
 
