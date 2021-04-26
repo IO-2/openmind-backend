@@ -9,5 +9,6 @@ namespace OpenMind.Domain.Media
         public int Type { get; set; }
         public int Category { get; set; }
         public long UploadedTime { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

@@ -19,11 +19,13 @@ namespace OpenMind.Services
         private readonly IWebHostEnvironment _environment;
         private readonly DataContext _context;
 
+        protected override IList<string> AllowedFiles { get; set; } = new List<string> {"image/png", "image/jpg", "image/jpeg"};
+        protected override string ContentsFolderName { get; set; } = "Courses";
+
         public CourseService(IWebHostEnvironment environment, DataContext context)
         {
             _environment = environment;
             _context = context;
-            AllowedFiles = new List<string> {"image/png", "image/jpg", "image/jpeg"};
         }
 
         public async Task<ServiceActionResult> CreateCourseAsync(CreateCourseRequest contract)
@@ -35,7 +37,7 @@ namespace OpenMind.Services
                 
                 if (contract.Image.Length > 0 && AllowedFiles.Contains(contract.Image.ContentType))
                 {
-                    resultImage = await SaveFile(_environment.WebRootPath, "Courses", contract.Image);
+                    resultImage = await SaveFile(_environment.WebRootPath, ContentsFolderName, contract.Image);
                     if (resultImage is null)
                     {
                         throw new Exception("Unable to save course picture");
@@ -188,7 +190,8 @@ namespace OpenMind.Services
                     {
                         Id = x.Id,
                         Section = x.Section,
-                        Title = x.Title
+                        Title = x.Title,
+                        ImageUrl = x.ImageUrl
                     })
                     .AsQueryable()
                     .ToPagedList(page, 20)
@@ -259,6 +262,7 @@ namespace OpenMind.Services
                     UploadedTime = course.UploadedTime,
                     VideoUrl = course.VideoUrl,
                     WhatWillBeLearned = course.WhatWillBeLearned,
+                    ImageUrl = course.ImageUrl
                 }
             };
         }

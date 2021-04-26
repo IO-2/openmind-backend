@@ -26,7 +26,7 @@
       <Folder Include="Contracts\Responses\Courses" />
       <Folder Include="Migrations" />
       <Folder Include="wwwroot" />
-      <Folder Include="wwwroot\Avatars" />
+      <Folder Include="wwwroot\Avatars942f46443886666f932307475b0d0815" />
     </ItemGroup>
 
 </Project>

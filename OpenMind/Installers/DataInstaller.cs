@@ -26,7 +26,7 @@ namespace OpenMind.Installers
             {
                 x.UseLazyLoadingProxies()
                     .UseNpgsql(configuration.GetConnectionString("Default"));
-            }); 
+            }, ServiceLifetime.Singleton); 
 
             services.AddIdentity<UserModel, IdentityRole>(options =>
                 {

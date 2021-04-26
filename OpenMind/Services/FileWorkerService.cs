@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +11,14 @@ using OpenMind.Domain;
 
 namespace OpenMind.Services
 {
-    public class FileWorkerService : Service
+    public abstract class FileWorkerService : Service
     {
-        protected IList<string> AllowedFiles { get; set;}
+        protected abstract IList<string> AllowedFiles { get; set; }
+        protected abstract string ContentsFolderName { get; set; }
         
+        private readonly string FolderSalt = "942f46443886666f932307475b0d0815";
+        
+
         protected string GetRootUrl(HttpContext httpContext)
         {
             var afterDomain = httpContext.Request.Path;
@@ -38,6 +43,7 @@ namespace OpenMind.Services
 
         protected async Task<SaveFileResponse> SaveFile(string webRootPath, string folder, IFormFile file)
         {
+<<<<<<< HEAD
 
 	    if (string.IsNullOrWhiteSpace(webRootPath))
 	    {
@@ -45,17 +51,21 @@ namespace OpenMind.Services
 	    }	
 
 	    var mediaPath = Path.Combine(webRootPath, folder);
+=======
+            var mediaPath = Path.Combine(webRootPath, folder + FolderSalt);
+>>>>>>> 1f1fe248338770ff77c76d6b6cf2b74f00a0da9b
             if (!Directory.Exists(mediaPath))
             {
                 Directory.CreateDirectory(mediaPath);
             }
-
+            
+            // TODO: Change this string working stuff to normal paths
             var onlyExtension = file.FileName.Substring(file.FileName.LastIndexOf(".") + 1);
             var onlyName = file.FileName.Remove(file.FileName.LastIndexOf("."));
 
             var newFilename = Md5Hash(onlyName + new Random().Next(0, 100000) + DateTime.UtcNow) + "." + onlyExtension;
 
-            using (FileStream fileStream = System.IO.File.Create(Path.Combine(mediaPath, newFilename)))
+            using (FileStream fileStream = File.Create(Path.Combine(mediaPath, newFilename)))
             {
                 await file.CopyToAsync(fileStream);
                 await fileStream.FlushAsync();
@@ -63,7 +73,7 @@ namespace OpenMind.Services
 
             return new SaveFileResponse
             {
-                SavedFilePath = Path.Combine(mediaPath, newFilename)
+                SavedFilePath = Path.Combine(ContentsFolderName + FolderSalt, newFilename)
             };
         }
 

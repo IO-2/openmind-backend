@@ -37,3 +37,4 @@ Desktop.ini
 appsettings.*
 init.sql
 docker-compose.yml
+wwwroot
