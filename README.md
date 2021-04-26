@@ -43,7 +43,7 @@ Media types
 > 1 - Checklist
 > 2 - Longread
 > 3 - About cool guys
-
+[DEPRECATED]
 #### `/get-file` [GET]
 Request **(application/json)**
 
