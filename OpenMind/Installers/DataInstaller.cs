@@ -16,11 +16,11 @@ namespace OpenMind.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IMediaService, MediaService>();
-            services.AddScoped<IEmailValidator, EmailValidator>();
-            services.AddScoped<IPasswordValidator, PasswordValidator>();
-            services.AddScoped<ICoursesService, CourseService>();
+            services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IMediaService, MediaService>();
+            services.AddTransient<IEmailValidator, EmailValidator>();
+            services.AddTransient<IPasswordValidator, PasswordValidator>();
+            services.AddTransient<ICoursesService, CourseService>();
             
             services.AddDbContext<DataContext>(x =>
             {
