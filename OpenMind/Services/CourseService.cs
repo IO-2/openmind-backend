@@ -63,6 +63,7 @@ namespace OpenMind.Services
                     LessonsDescription = contract.LessonsDescription,
                     LessonsNumber = contract.LessonsNumber,
                     WhatWillBeLearned = contract.WhatWillBeLearned,
+                    SpeakerName = contract.SpeakerName,
                     SpeakerPictureUrl = resultSpeakerPicture.SavedFilePath,
                     SpeakerDescription = contract.SpeakerDescription,
                     Section = contract.Section,
