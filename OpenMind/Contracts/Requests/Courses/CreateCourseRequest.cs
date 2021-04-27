@@ -20,6 +20,8 @@ namespace OpenMind.Contracts.Requests.Courses
         public string LessonsDescription { get; set; }
         [Required]
         public string WhatWillBeLearned { get; set; }
+        [Required] 
+        public string SpeakerName { get; set; }
         [Required]
         public IFormFile SpeakerPicture { get; set; }
         [Required]
