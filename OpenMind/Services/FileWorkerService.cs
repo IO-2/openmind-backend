@@ -18,7 +18,7 @@ namespace OpenMind.Services
         
         private readonly string FolderSalt = "942f46443886666f932307475b0d0815";
         
-
+        // TODO: Remove this shit
         protected string GetRootUrl(HttpContext httpContext)
         {
             var afterDomain = httpContext.Request.Path;
@@ -74,6 +74,7 @@ namespace OpenMind.Services
 
         protected void DeleteFile(string fullPath)
         {
+            // TODO: Make proper deletion
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
