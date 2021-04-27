@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using OpenMind.Models;
+using OpenMind.Models.Courses;
 
 namespace OpenMind.Domain.Courses
 {
-    public class CourseResult : Localizable
+    public class CourseResult
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public string VideoUrl { get; set; }
         public long UploadedTime { get; set; }
@@ -12,9 +14,7 @@ namespace OpenMind.Domain.Courses
         public string LessonsDescription { get; set; }
         public int LessonsAmount { get; set; }
         public string WhatWillBeLearned { get; set; }
-        public string SpeakerDescription { get; set; }
-        public string SpeakerName { get; set; }
-        public string SpeakerImage { get; set; }
+        public SpeakerResult Speaker { get; set; }
         public int Section { get; set; }
         public int CourseDuration { get; set; }
         public IEnumerable<CourseCardResult> Cards { get; set; }

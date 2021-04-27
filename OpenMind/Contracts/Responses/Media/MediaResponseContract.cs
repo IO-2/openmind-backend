@@ -2,7 +2,7 @@ using OpenMind.Models;
 
 namespace OpenMind.Contracts.Responses.Media
 {
-    public class MediaResponseContract : Localizable
+    public class MediaResponseContract
     {
         public int Id { get; set; }
         public string Title { get; set; }

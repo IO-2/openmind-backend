@@ -17,9 +17,7 @@ namespace OpenMind.Models.Courses
         public int LessonsAmount { get; set; }
         public virtual ICollection<CourseCardModel> Cards { get; set; }
         public string WhatWillBeLearned { get; set; }
-        public string SpeakerPictureUrl { get; set; }
-        public string SpeakerDescription { get; set; }
-        public string SpeakerName { get; set; }
+        public virtual SpeakerModel Speaker { get; set; }
         public virtual ICollection<CourseBenefitersModel> Benefiters { get; set; }
         
         // Lessons

@@ -2,7 +2,7 @@ using OpenMind.Models;
 
 namespace OpenMind.Domain.Media
 {
-    public class BriefMediaResult : Localizable
+    public class BriefMediaResult
     {
         public int Id { get; set; }
         public string Title { get; set; }

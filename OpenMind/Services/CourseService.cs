@@ -43,6 +43,10 @@ namespace OpenMind.Services
                         throw new Exception("Unable to save course picture");
                     }                    
                 }
+                else
+                {
+                    throw new Exception("No picture provided to course");
+                }
 
                 if (contract.SpeakerPicture.Length > 0 && AllowedFiles.Contains(contract.SpeakerPicture.ContentType))
                 {
@@ -51,21 +55,27 @@ namespace OpenMind.Services
                     {
                         throw new Exception("Unable to save speaker picture");
                     }   
+                }else
+                {
+                    throw new Exception("No picture provided to speaker");
                 }
                 
                 var course =  _context.Courses.Add(new CourseModel
                 {
                     Title = contract.Title,
                     VideoUrl = contract.VideoUrl,
-                    ImageUrl = resultImage.SavedFilePath,
+                    ImageUrl = resultImage!.SavedFilePath,
                     Locale = contract.Locale,
                     Description = contract.Description,
                     LessonsDescription = contract.LessonsDescription,
                     LessonsAmount = contract.LessonsAmount,
                     WhatWillBeLearned = contract.WhatWillBeLearned,
-                    SpeakerName = contract.SpeakerName,
-                    SpeakerPictureUrl = resultSpeakerPicture.SavedFilePath,
-                    SpeakerDescription = contract.SpeakerDescription,
+                    Speaker = new SpeakerModel
+                    {
+                        Name = contract.SpeakerName,
+                        ImageUrl = resultSpeakerPicture!.SavedFilePath,
+                        Description = contract.SpeakerDescription,
+                    },
                     Section = contract.Section,
                     CourseDuration = contract.CourseDuration,
                     UploadedTime = DateTimeOffset.Now.ToUnixTimeSeconds()
@@ -202,6 +212,7 @@ namespace OpenMind.Services
             return pagedResult;
         }
 
+        // DEPRECATED
         public async Task<ServiceActionResult> GetCoursePictureAsync(int id)
         {
             var course = _context.Courses.FirstOrDefault(x => x.Id == id);
@@ -232,6 +243,7 @@ namespace OpenMind.Services
                 Success = true,
                 Data = new CourseResult
                 {
+                    Id = course.Id,
                     Title = course.Title,
                     Benefiters = course.Benefiters.Select(x => new CourseBenefiterResult
                     {
@@ -257,10 +269,12 @@ namespace OpenMind.Services
                     LessonsDescription = course.LessonsDescription,
                     LessonsAmount = course.LessonsAmount,
                     Section = course.Section,
-                    SpeakerDescription = course.SpeakerDescription,
-                    SpeakerName = course.SpeakerName,
-                    SpeakerImage = course.SpeakerPictureUrl,
-                    Locale = course.Locale,
+                    Speaker = new SpeakerResult
+                    {
+                        Name = course.Speaker.Name,
+                        ImageUrl = course.Speaker.ImageUrl,
+                        Description = course.Speaker.Description,
+                    },
                     UploadedTime = course.UploadedTime,
                     VideoUrl = course.VideoUrl,
                     WhatWillBeLearned = course.WhatWillBeLearned,
@@ -272,9 +286,10 @@ namespace OpenMind.Services
         public async Task<ServiceActionResult> GetLessonAsync(int id, int lessonNumber)
         {
             var lesson = _context.Courses
-                .FirstOrDefault(x => x.Id == id)
+                .First(x => x.Id == id)
                 .Lessons
                 .FirstOrDefault(x => x.LessonNumber == lessonNumber);
+            
             if (lesson is null)
             {
                 return BadServiceActionResult("Course not found");

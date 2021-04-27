@@ -70,6 +70,11 @@ namespace OpenMind.Data
                 .HasOne(p => p.Course)
                 .WithMany(t => t.Lessons)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<CourseModel>()
+                .HasOne(p => p.Speaker)
+                .WithMany(t => t.Courses)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

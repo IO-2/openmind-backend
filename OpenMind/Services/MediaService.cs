@@ -74,7 +74,6 @@ namespace OpenMind.Services
                 {
                     Id = media.Id,
                     Title = media.Title,
-                    Locale = media.Locale,
                     Text = media.Text,
                     Type = media.Type,
                     Category = media.Category,
@@ -141,7 +140,6 @@ namespace OpenMind.Services
                     {
                         Id = x.Id,
                         Title = x.Title,
-                        Locale = x.Locale,
                         Type = x.Type,
                         Category = x.Category,
                         UploadedTime = x.UploadedTime,
@@ -165,7 +163,6 @@ namespace OpenMind.Services
             {
                 Id = x.Id,
                 Title = x.Title,
-                Locale = x.Locale,
                 Type = x.Type,
                 Category = x.Category,
                 UploadedTime = x.UploadedTime,

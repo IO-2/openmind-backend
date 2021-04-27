@@ -109,6 +109,7 @@ namespace OpenMind.Controllers
             return Ok((result as ListResponse<CourseThumbnailResult>).Data);
         }
         
+        // DEPRECATED
         [HttpGet("get-course-picture")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetCoursePicture(int id)
