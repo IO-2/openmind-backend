@@ -129,7 +129,6 @@ Response **(application/json)**
 		"id": Int,
 		"title": String,
 		"type": Int,
-		"locale": String,
 		"category": Int,
 		"uploadedTime": Long,
 		[UPDATE]
@@ -165,7 +164,6 @@ Response **(application/json)**
 		"id": Int,
 		"title": String,
 		"type": Int,
-		"locale": String,
 		"category": Int,
 		"uploadedTime": Long,
 		[UPDATE]
@@ -356,7 +354,7 @@ Request **(application/form-data)**
 	"videoUrl": String,
 	"description": String,
 	"lessonsDescription": String,
-	"lessonsNumber": Int,
+	"lessonsAmount": Int,
 	"whatWillBeLearned": String,
 	"speakerPicture": Image,
 	"speakerDescription": String,
@@ -467,7 +465,7 @@ Response **(application/json)**
 }
 ```
 
-#### `/get-for-search` [GET]
+#### `/get` [GET]
 
 Request **(application/json)**
 
@@ -521,18 +519,16 @@ Response **(application/json)**
 
 ```swift
 {
+	"id": Int,
 	"title": String,
 	"videoUrl": String,
 	"uploadedTime": Long,
 	"description": String,
 	"lessonsDescription": String,
-	"lessonsNumber": Int,
+	"lessonsAmount": Int,
 	"whatWillBeLearned": String,
-	"speakerDescription": String,
-	"speakerName": String,
 	"section": Int,
 	"courseDuration": Int,
-	"locale": String,
 	"cards": [
 		{
 			"id": Int,
@@ -556,32 +552,36 @@ Response **(application/json)**
 		}
 	],
 	[UPDATE]
-	"iamgeUrl": String
+	"imageUrl": String,
+	"speaker": {
+		"description": String,
+		"name": String,
+		"imageUrl": String,
+	}
 }
 ```
 
-#### `/get-course-lessons-info-privilege` [GET] [Token required]
+#### `/get-lesson` [GET] [Token required]
 Get course lessons by course id
+Only for subscribed
 
 Request **(application/json)**
 
 ```swift
 {
-	"id": Int
+	"id": Int,
+	"lessonNumber": Int
 }
 ```
 
 Response **(application/json)**
 
 ```swift
-[
-	{
-		"courseId": Int,
-		"title": String,
-		"description": String,
-		"videoUrl": String,
-		"lessonNumber": Int
-	}
-]
+{
+	"title": String,
+	"description": String,
+	"videoUrl": String,
+	"lessonNumber": Int
+}
 ```
 
