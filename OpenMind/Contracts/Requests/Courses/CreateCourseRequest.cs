@@ -15,7 +15,7 @@ namespace OpenMind.Contracts.Requests.Courses
         [Required]
         public string Description { get; set; }
         [Required]
-        public int LessonsNumber { get; set; }
+        public int LessonsAmount { get; set; }
         [Required]
         public string LessonsDescription { get; set; }
         [Required]

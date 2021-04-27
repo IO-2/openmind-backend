@@ -13,9 +13,9 @@ namespace OpenMind.Services.Interfaces
         Task<ServiceActionResult> CreateCardsAsync(IEnumerable<CourseCardContract> cards);
         Task<ServiceActionResult> CreateCourseLessonAsync(CreateCourseLessonRequest contract);
         Task<ServiceActionResult> DeleteCourseAsync(int id);
-        Task<ServiceActionResult> GetForSearchAsync(string locale, int page, string query);
+        Task<ServiceActionResult> GetAsync(string locale, int page, string query);
         Task<ServiceActionResult> GetCoursePictureAsync(int id);
         Task<ServiceActionResult> GetInfoAsync(int id);
-        Task<ServiceActionResult> GetCourseLessonsInfoPrivilegeAsync(int id);
+        Task<ServiceActionResult> GetLessonAsync(int id, int lessonNumber);
     }
 }

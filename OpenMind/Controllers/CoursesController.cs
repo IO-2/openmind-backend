@@ -97,9 +97,9 @@ namespace OpenMind.Controllers
         
         [HttpGet("get")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> GetForSearch(string locale, int page, string query)
+        public async Task<IActionResult> Get(string locale, int page, string query)
         {
-            var result = await _coursesService.GetForSearchAsync(locale, page, query);
+            var result = await _coursesService.GetAsync(locale, page, query);
 
             if (!result.Success)
             {
@@ -138,19 +138,19 @@ namespace OpenMind.Controllers
             return Ok((result as SingleObjectResult<CourseResult>).Data);
         }
         
-        [HttpGet("get-course-lessons-info-privilege")]
+        [HttpGet("get-lesson")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> GetCourseLessonsInfoPrivilege(int id)
+        public async Task<IActionResult> GetCourseLessonsInfoPrivilege(int id, int lessonNumber)
         {
-            var result = await _coursesService.GetCourseLessonsInfoPrivilegeAsync(id);
+            var result = await _coursesService.GetLessonAsync(id, lessonNumber);
 
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as ListResponse<CourseResult>).Data);
+            return Ok((result as SingleObjectResult<CourseLessonResult>).Data);
         }
     }
 }

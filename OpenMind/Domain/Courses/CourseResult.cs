@@ -10,7 +10,7 @@ namespace OpenMind.Domain.Courses
         public long UploadedTime { get; set; }
         public string Description { get; set; }
         public string LessonsDescription { get; set; }
-        public int LessonsNumber { get; set; }
+        public int LessonsAmount { get; set; }
         public string WhatWillBeLearned { get; set; }
         public string SpeakerDescription { get; set; }
         public string SpeakerName { get; set; }

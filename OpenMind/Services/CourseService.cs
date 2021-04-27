@@ -61,7 +61,7 @@ namespace OpenMind.Services
                     Locale = contract.Locale,
                     Description = contract.Description,
                     LessonsDescription = contract.LessonsDescription,
-                    LessonsNumber = contract.LessonsNumber,
+                    LessonsAmount = contract.LessonsAmount,
                     WhatWillBeLearned = contract.WhatWillBeLearned,
                     SpeakerName = contract.SpeakerName,
                     SpeakerPictureUrl = resultSpeakerPicture.SavedFilePath,
@@ -176,7 +176,7 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> GetForSearchAsync(string locale, int page, string query)
+        public async Task<ServiceActionResult> GetAsync(string locale, int page, string query)
         {
             var courses = _context.Courses
                 .Where(x => x.Locale != locale || query == null || x.Title.Contains(query))
@@ -255,7 +255,7 @@ namespace OpenMind.Services
                     CourseDuration = course.CourseDuration,
                     Description = course.Description,
                     LessonsDescription = course.LessonsDescription,
-                    LessonsNumber = course.LessonsNumber,
+                    LessonsAmount = course.LessonsAmount,
                     Section = course.Section,
                     SpeakerDescription = course.SpeakerDescription,
                     SpeakerName = course.SpeakerName,
@@ -269,25 +269,27 @@ namespace OpenMind.Services
             };
         }
 
-        public async Task<ServiceActionResult> GetCourseLessonsInfoPrivilegeAsync(int id)
+        public async Task<ServiceActionResult> GetLessonAsync(int id, int lessonNumber)
         {
-            var course = _context.Courses.FirstOrDefault(x => x.Id == id);
-            if (course is null)
+            var lesson = _context.Courses
+                .FirstOrDefault(x => x.Id == id)
+                .Lessons
+                .FirstOrDefault(x => x.LessonNumber == lessonNumber);
+            if (lesson is null)
             {
                 return BadServiceActionResult("Course not found");
             }
 
-            return new ListResponse<CourseLessonResult>
+            return new SingleObjectResult<CourseLessonResult>
             {
                 Success = true,
-                Data = course.Lessons.Select(x => new CourseLessonResult
+                Data = new CourseLessonResult
                 {
-                    CourseId = course.Id,
-                    Description = x.Description,
-                    LessonNumber = x.LessonNumber,
-                    Title = x.Title,
-                    VideoUrl = x.VideoUrl
-                }).ToList()
+                    Description = lesson.Description,
+                    LessonNumber = lesson.LessonNumber,
+                    Title = lesson.Title,
+                    VideoUrl = lesson.VideoUrl
+                }
             };
         }
     }
