@@ -95,7 +95,7 @@ namespace OpenMind.Controllers
             return Ok(result);
         }
         
-        [HttpGet("get-for-search")]
+        [HttpGet("get")]
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetForSearch(string locale, int page, string query)
         {
