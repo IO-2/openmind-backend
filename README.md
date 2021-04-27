@@ -552,7 +552,7 @@ Response **(application/json)**
 		}
 	],
 	[UPDATE]
-	"iamgeUrl": String,
+	"imageUrl": String,
 	"speaker": {
 		"description": String,
 		"name": String,
