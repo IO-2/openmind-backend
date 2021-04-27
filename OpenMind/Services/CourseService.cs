@@ -258,6 +258,7 @@ namespace OpenMind.Services
                     Section = course.Section,
                     SpeakerDescription = course.SpeakerDescription,
                     SpeakerName = course.SpeakerName,
+                    SpeakerImage = course.SpeakerPictureUrl,
                     Locale = course.Locale,
                     UploadedTime = course.UploadedTime,
                     VideoUrl = course.VideoUrl,

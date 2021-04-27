@@ -14,6 +14,7 @@ namespace OpenMind.Domain.Courses
         public string WhatWillBeLearned { get; set; }
         public string SpeakerDescription { get; set; }
         public string SpeakerName { get; set; }
+        public string SpeakerImage { get; set; }
         public int Section { get; set; }
         public int CourseDuration { get; set; }
         public IEnumerable<CourseCardResult> Cards { get; set; }
