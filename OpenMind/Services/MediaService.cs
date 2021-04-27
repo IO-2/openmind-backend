@@ -37,12 +37,7 @@ namespace OpenMind.Services
             {
                 if (file.Length > 0 && AllowedFiles.Contains(file.ContentType))
                 {
-<<<<<<< HEAD
-	
-		    var result = await SaveFile(_environment.WebRootPath, "Media", file);
-=======
                     var result = await SaveFile(_environment.WebRootPath, ContentsFolderName, file);
->>>>>>> 1f1fe248338770ff77c76d6b6cf2b74f00a0da9b
                     
                     _context.Media.Add(new MediaModel
                     {

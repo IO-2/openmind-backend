@@ -42,13 +42,10 @@ namespace OpenMind
             }
 
             app.UseRouting();
-<<<<<<< HEAD
-=======
 
             app.UseStaticFiles();
 
             app.UseCors(MyAllowSpecificOrigins);
->>>>>>> 1f1fe248338770ff77c76d6b6cf2b74f00a0da9b
             
 	    app.UseHttpsRedirection();
 
