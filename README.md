@@ -85,8 +85,7 @@ Request **(application/form-data)**
 	"text": String,
 	"locale": String,
 	"type": Int,
-	"category": Int,
-	"uploadedTime": Long
+	"category": Int
 }
 ```
 
