@@ -6,5 +6,6 @@ namespace OpenMind.Domain.Courses
         public string Title { get; set; }
         public int Section { get; set; }
         public string ImageUrl { get; set; }
+        public int LessonsAmount { get; set; }
     }
 }

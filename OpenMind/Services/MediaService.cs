@@ -134,7 +134,7 @@ namespace OpenMind.Services
                 .Reverse()
                 .ToList();
             
-            var result = new ListResponse<BriefMediaResult>
+            var result = new ListResult<BriefMediaResult>
             {
                 Data = resultMedias.Select(x => new BriefMediaResult
                     {
@@ -171,7 +171,7 @@ namespace OpenMind.Services
             var paged = selected.ToPagedList(page, 20);
             var listed = paged.ToList();
             
-            var result = new ListResponse<BriefMediaResult>
+            var result = new ListResult<BriefMediaResult>
             {
                 Data = listed,
                 Success = true

@@ -106,7 +106,7 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as ListResponse<CourseThumbnailResult>).Data);
+            return Ok((result as ListResult<CourseThumbnailResult>).Data);
         }
         
         // DEPRECATED

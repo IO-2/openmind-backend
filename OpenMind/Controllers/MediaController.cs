@@ -48,7 +48,7 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as ListResponse<BriefMediaResult>).Data);
+            return Ok((result as ListResult<BriefMediaResult>).Data);
         }
         
         [HttpGet("get-info-by-category")]
@@ -66,7 +66,7 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok((result as ListResponse<BriefMediaResult>).Data);
+            return Ok((result as ListResult<BriefMediaResult>).Data);
         }
         
         [HttpGet("get-file")]

@@ -194,19 +194,22 @@ namespace OpenMind.Services
                 .Reverse()
                 .ToList();
 
-            var pagedResult = new ListResponse<CourseThumbnailResult>
+            var data = courses.Select(x => new CourseThumbnailResult
+                {
+                    Id = x.Id,
+                    Section = x.Section,
+                    Title = x.Title,
+                    ImageUrl = x.ImageUrl,
+                    LessonsAmount = x.LessonsAmount
+                })
+                .AsQueryable()
+                .ToPagedList(page, 20)
+                .ToList();
+            
+            var pagedResult = new ListResult<CourseThumbnailResult>
             {
                 Success = true,
-                Data = courses.Select(x => new CourseThumbnailResult
-                    {
-                        Id = x.Id,
-                        Section = x.Section,
-                        Title = x.Title,
-                        ImageUrl = x.ImageUrl
-                    })
-                    .AsQueryable()
-                    .ToPagedList(page, 20)
-                    .ToList()
+                Data = data
             };
 
             return pagedResult;
