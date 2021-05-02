@@ -11,7 +11,7 @@ namespace OpenMind.Services.Interfaces
         Task<ServiceActionResult> LoginAsync(string email, string password);
         Task<ServiceActionResult> RefreshTokenAsync(string token, string refreshToken);
         Task<ServiceActionResult> DeleteAsync(string token);
-        Task<ServiceActionResult> GetInfoAsync(string token, string locale);
+        Task<ServiceActionResult> GetInfoAsync(string email, string locale);
         Task<ServiceActionResult> SetAvatarAsync(IFormFile avatar, string email);
         Task<ServiceActionResult> IsEmailValidAsync(string email);
         Task<ServiceActionResult> IsPasswordValidAsync(string password);
