@@ -229,12 +229,14 @@ namespace OpenMind.Services
                 };
             }
 
+            // TODO: Create another method for this
             var courses = await _context.Courses.Where(x => x.Locale == locale).ToListAsync();
 
             var successes = new Dictionary<int, float>();
 
             for (int i = 1; i <= 4; i++)
             {
+                // Check if user has progress on section created
                 UserProgressBySectionModel? first = null;
                 foreach (var x in user.Progresses)
                 {
@@ -245,13 +247,16 @@ namespace OpenMind.Services
                     }
                 }
 
-                var coursesBySection = courses.Count(x => x.Section == i);
-                if (coursesBySection == 0)
+                var lessonsBySection = courses
+                    .Where(x => x.Section == i)
+                    .Select(x => x.Lessons).Count();
+                // Check if no lessons in this section, set to zero
+                if (lessonsBySection == 0)
                 {
                     successes.Add(i, 0f);
                     continue;
                 }
-                if (first != null) successes.Add(i, first.CompletedAmount / coursesBySection);
+                if (first != null) successes.Add(i, first.CompletedAmount / lessonsBySection);
             }
             
 

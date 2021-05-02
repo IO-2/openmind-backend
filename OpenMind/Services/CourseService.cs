@@ -189,7 +189,7 @@ namespace OpenMind.Services
         public async Task<ServiceActionResult> GetAsync(string locale, int page, string query)
         {
             var courses = _context.Courses
-                .Where(x => x.Locale != locale || query == null || x.Title.Contains(query))
+                .Where(x => x.Locale != locale || query == null || x.Title.ToLower().Contains(query.ToLower()))
                 .OrderBy(x => x.UploadedTime)
                 .Reverse()
                 .ToList();
