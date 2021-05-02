@@ -201,7 +201,7 @@ namespace OpenMind.Services
                     Section = x.Section,
                     Title = x.Title,
                     ImageUrl = x.ImageUrl,
-                    LessonsAmount = x.LessonsAmount
+                    CourseDuration = x.CourseDuration
                 })
                 .AsQueryable()
                 .ToPagedList(page, 20)
