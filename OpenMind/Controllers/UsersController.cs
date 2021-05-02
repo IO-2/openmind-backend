@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -181,7 +182,8 @@ namespace OpenMind.Controllers
         public async Task<IActionResult> AddProgress([FromBody] AddProgressRequest request)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _identityService.AddProgressAsync(email, request.SectionNumber, request.Progress);
+            var result = await _identityService
+                .AddProgressAsync(email, Int32.Parse(request.SectionNumber), Int32.Parse(request.Progress));
 
             if (!result.Success)
             {
