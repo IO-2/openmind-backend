@@ -178,10 +178,10 @@ namespace OpenMind.Controllers
         [HttpPost("add-progress")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> AddProgress(int sectionNumber, int progress, string locale)
+        public async Task<IActionResult> AddProgress([FromBody] AddProgressRequest request)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _identityService.AddProgressAsync(email, sectionNumber, progress);
+            var result = await _identityService.AddProgressAsync(email, request.SectionNumber, request.Progress);
 
             if (!result.Success)
             {
@@ -192,7 +192,7 @@ namespace OpenMind.Controllers
                 return BadRequest(result.Errors);
             }
 
-            var userResult = await _identityService.GetInfoAsync(email, locale);
+            var userResult = await _identityService.GetInfoAsync(email, request.Locale);
 
             return Ok((userResult as UserInfoActionResult).User);
         }

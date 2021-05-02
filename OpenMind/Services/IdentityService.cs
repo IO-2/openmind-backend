@@ -249,14 +249,14 @@ namespace OpenMind.Services
 
                 var lessonsBySection = courses
                     .Where(x => x.Section == i)
-                    .Select(x => x.Lessons).Count();
+                    .SelectMany(x => x.Lessons).Count();
                 // Check if no lessons in this section, set to zero
                 if (lessonsBySection == 0)
                 {
                     successes.Add(i, 0f);
                     continue;
                 }
-                if (first != null) successes.Add(i, first.CompletedAmount / lessonsBySection);
+                if (first != null) successes.Add(i, (float)first.CompletedAmount / lessonsBySection);
             }
             
 
@@ -384,6 +384,7 @@ namespace OpenMind.Services
             }
 
             user.Progresses.FirstOrDefault(x => x.Section == sectionNumber)!.CompletedAmount += progress;
+            await _context.SaveChangesAsync();
 
             return OkServiceActionResult();
         }
