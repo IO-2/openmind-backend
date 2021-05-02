@@ -4,7 +4,7 @@ namespace OpenMind.Contracts.Requests.Users
 {
     public class AddProgressRequest : Localizable
     {
-        public int SectionNumber { get; set; }
-        public int Progress { get; set; }
+        public string SectionNumber { get; set; }
+        public string Progress { get; set; }
     }
 }
