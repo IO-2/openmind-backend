@@ -266,7 +266,8 @@ namespace OpenMind.Services
                     Lessons = course.Lessons.Select(x => new BriefCourseLessonResult
                     {
                         LessonNumber = x.LessonNumber,
-                        Title = x.Title
+                        Title = x.Title,
+                        Description = x.Description
                     }),
                     CourseDuration = course.CourseDuration,
                     Description = course.Description,
