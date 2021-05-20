@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -105,8 +107,9 @@ namespace OpenMind.Controllers
             {
                 return BadRequest(result.Errors);
             }
-
-            return Ok((result as ListResult<CourseThumbnailResult>).Data);
+            
+            // Returns empty array if query is null or empty
+            return Ok(!query.IsNullOrEmpty() ? (result as ListResult<CourseThumbnailResult>).Data : new List<object>());
         }
         
         [HttpGet("get")]
