@@ -187,7 +187,7 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> GetAsync(string locale, int page, string query)
+        public async Task<ServiceActionResult> GetAsync(string locale, int? page, string query)
         {
             var courses = _context.Courses
                 .Where(x => x.Locale == locale && (!query.IsNullOrEmpty() ? x.Title.ToLower().Contains(query.ToLower()) : true))
@@ -195,24 +195,40 @@ namespace OpenMind.Services
                 .Reverse()
                 .ToList();
 
-            var data = courses.Select(x => new CourseThumbnailResult
+            var data = new List<CourseThumbnailResult>();
+
+            if (page is null)
+            {
+                data = courses.Select(x => new CourseThumbnailResult
                 {
                     Id = x.Id,
                     Section = x.Section,
                     Title = x.Title,
                     ImageUrl = x.ImageUrl,
                     CourseDuration = x.CourseDuration
-                })
-                .AsQueryable()
-                .ToPagedList(page, 20)
-                .ToList();
+                }).ToList();
+            }
+            else
+            {
+                data = courses.Select(x => new CourseThumbnailResult
+                    {
+                        Id = x.Id,
+                        Section = x.Section,
+                        Title = x.Title,
+                        ImageUrl = x.ImageUrl,
+                        CourseDuration = x.CourseDuration
+                    })
+                    .AsQueryable()
+                    .ToPagedList((int) page, 20)
+                    .ToList();
+            }
             
             var pagedResult = new ListResult<CourseThumbnailResult>
             {
                 Success = true,
                 Data = data
             };
-
+                
             return pagedResult;
         }
 
