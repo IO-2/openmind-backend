@@ -16,17 +16,17 @@ namespace OpenMind.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContextPool<DataContext>(x =>
+            {
+                x.UseLazyLoadingProxies()
+                    .UseNpgsql(configuration.GetConnectionString("Default"));
+            }); 
+            
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IMediaService, MediaService>();
             services.AddTransient<IEmailValidator, EmailValidator>();
             services.AddTransient<IPasswordValidator, PasswordValidator>();
             services.AddTransient<ICoursesService, CourseService>();
-            
-            services.AddDbContext<DataContext>(x =>
-            {
-                x.UseLazyLoadingProxies()
-                    .UseNpgsql(configuration.GetConnectionString("Default"));
-            }); 
 
             services.AddIdentity<UserModel, IdentityRole>(options =>
                 {
