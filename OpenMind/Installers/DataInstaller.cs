@@ -16,7 +16,7 @@ namespace OpenMind.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextPool<DataContext>(x =>
+            services.AddDbContext<DataContext>(x =>
             {
                 x.UseLazyLoadingProxies()
                     .UseNpgsql(configuration.GetConnectionString("Default"));
