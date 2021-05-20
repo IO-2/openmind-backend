@@ -95,11 +95,11 @@ namespace OpenMind.Controllers
             return Ok(result);
         }
         
-        [HttpGet("get")]
+        [HttpGet("search")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Get(string locale, int page, string query)
+        public async Task<IActionResult> Search(string locale, string query)
         {
-            var result = await _coursesService.GetAsync(locale, page, query);
+            var result = await _coursesService.GetAsync(locale, null, query);
 
             if (!result.Success)
             {
@@ -109,11 +109,11 @@ namespace OpenMind.Controllers
             return Ok((result as ListResult<CourseThumbnailResult>).Data);
         }
         
-        [HttpGet("get-all")]
+        [HttpGet("get")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Get(string locale, string query)
+        public async Task<IActionResult> Get(string locale, int page)
         {
-            var result = await _coursesService.GetAsync(locale, null, query);
+            var result = await _coursesService.GetAsync(locale, page, "");
 
             if (!result.Success)
             {
