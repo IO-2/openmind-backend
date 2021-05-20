@@ -109,6 +109,20 @@ namespace OpenMind.Controllers
             return Ok((result as ListResult<CourseThumbnailResult>).Data);
         }
         
+        [HttpGet("get-all")]
+        [MapToApiVersion("1.0")]
+        public async Task<IActionResult> Get(string locale, string query)
+        {
+            var result = await _coursesService.GetAsync(locale, null, query);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok((result as ListResult<CourseThumbnailResult>).Data);
+        }
+        
         // DEPRECATED
         [HttpGet("get-course-picture")]
         [MapToApiVersion("1.0")]
