@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,10 +16,12 @@ namespace OpenMind.Controllers
     public class CoursesController : MyControllerBase
     {
         private readonly ICoursesService _coursesService;
+        private readonly IIdentityService _identityService;
 
-        public CoursesController(ICoursesService coursesService)
+        public CoursesController(ICoursesService coursesService, IIdentityService identityService)
         {
             _coursesService = coursesService;
+            _identityService = identityService;
         }
 
         [HttpPost("create-course")]
@@ -57,6 +60,12 @@ namespace OpenMind.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateCards([FromBody] CreateCardsRequest request)
         {
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!await _identityService.IsAdminAsync(email))
+            {
+                return BadRequest("You are not admin");
+            }
+            
             var result = await _coursesService.CreateCardsAsync(request.Cards);
 
             if (!result.Success)
@@ -72,6 +81,11 @@ namespace OpenMind.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateCourseLesson([FromBody] CreateCourseLessonRequest request)
         {
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!await _identityService.IsAdminAsync(email))
+            {
+                return BadRequest("You are not admin");
+            }
             var result = await _coursesService.CreateCourseLessonAsync(request);
 
             if (!result.Success)
@@ -87,6 +101,11 @@ namespace OpenMind.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> DeleteCourse(int id)
         {
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!await _identityService.IsAdminAsync(email))
+            {
+                return BadRequest("You are not admin");
+            }
             var result = await _coursesService.DeleteCourseAsync(id);
 
             if (!result.Success)
