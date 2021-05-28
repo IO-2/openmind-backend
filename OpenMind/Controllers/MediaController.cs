@@ -1,5 +1,8 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Requests.Media;
@@ -14,10 +17,12 @@ namespace OpenMind.Controllers
     public class MediaController : MyControllerBase
     {
         private readonly IMediaService _mediaService;
+        private readonly IIdentityService _identityService;
         
-        public MediaController(IMediaService mediaService)
+        public MediaController(IMediaService mediaService, IIdentityService identityService)
         {
             this._mediaService = mediaService;
+            this._identityService = identityService;
         }
         
         [HttpGet("get-info")]
@@ -98,11 +103,17 @@ namespace OpenMind.Controllers
 
         [HttpPost("create")]
         [MapToApiVersion("1.0")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Create([FromForm] MediaCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage)));
+            }
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!await _identityService.IsAdminAsync(email))
+            {
+                return BadRequest("You are not admin");
             }
             
             var file = request.File.FirstOrDefault();

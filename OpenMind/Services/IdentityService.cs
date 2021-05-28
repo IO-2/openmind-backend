@@ -389,6 +389,13 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
+        public async Task<bool> IsAdminAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return user.PrivilegeLevel >= 4;
+        }
+
         private async Task<AuthActionResult> GenerateAuthenticationResultForUser(UserModel newUser)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
