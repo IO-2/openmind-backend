@@ -90,8 +90,14 @@ namespace OpenMind.Controllers
         
         [HttpDelete("delete")]
         [MapToApiVersion("1.0")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Delete(ActionWithIdRequest request)
         {
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!await _identityService.IsAdminAsync(email))
+            {
+                return BadRequest("You are not admin");
+            }
             var result = await _mediaService.DeleteAsync(request.Id);
             if (!result.Success)
             {
