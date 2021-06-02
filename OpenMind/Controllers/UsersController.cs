@@ -146,6 +146,22 @@ namespace OpenMind.Controllers
                 RefreshToken = tokenResult.RefreshToken
             });
         }
+        
+        [HttpPost("send-receipt")]
+        [MapToApiVersion("1.0")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> SendReceipt([FromBody] string receipt)
+        {
+            string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await _identityService.SendReceiptAsync(receipt, email);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(true);
+        }
 
         [HttpPost("login")]
         [MapToApiVersion("1.0")]

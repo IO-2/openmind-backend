@@ -14,6 +14,7 @@ namespace OpenMind.Models.Users
         public string Inspirer { get; set; }
         public string WhyInspired { get; set; }
         public long SubscriptionEndDate { get; set; }
+        public string Receipt { get; set; }
         public virtual ICollection<InterestModel> Interests { get; set; }
         public virtual ICollection<UserProgressBySectionModel> Progresses { get; set; }
         public virtual ICollection<UserRateCourseModel> UserRatresCources { get; set; }
