@@ -394,31 +394,80 @@ namespace OpenMind.Services
             return OkServiceActionResult();
         }
 
-        public async Task<ServiceActionResult> SendReceiptAsync(string receipt, string email)
+        public async Task<ServiceActionResult> SendReceiptAsync(string receipt, string email, string locale)
         {
             var user = await _userManager.FindByEmailAsync(email);
             string resultString = string.Empty;
 
-            using (var client = new WebClient())
+            try
             {
-                client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                // TODO: Find a better way to JSON Serialization
-                resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", $"{{\"password\": {_configuration["AppstorePassword"]}," +
-                    $" \"receipt-data\": {receipt}, \"exclude-old-transactions\" : false}}");
+                using (var client = new WebClient())
+                {
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
+                                  $" \"receipt-data\": \"{receipt}\", \"exclude-old-transactions\": false}}";
+                    // TODO: Find a better way to JSON Serialization
+                    resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
+                }
+
+                dynamic result = JsonConvert.DeserializeObject(resultString);
+
+                user.Receipt = receipt;
+                user.SubscriptionEndDate = result.latest_receipt_info.Last.expires_date_ms;
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return BadServiceActionResult("Cannot get receipt info");
             }
 
-            dynamic result = JsonConvert.DeserializeObject(resultString);
-            
-            user.Receipt = receipt;
-            user.SubscriptionEndDate = ((List<dynamic>) result.latest_receipt_info).Last().expires_date_ms;
-            await _context.SaveChangesAsync();
-
-            return OkServiceActionResult();
+            return await GetInfoAsync(email, locale);
         }
 
         public async Task<bool> IsSubscribed(string email)
         {
-            return (await _userManager.FindByEmailAsync(email)).SubscriptionEndDate > DateTimeOffset.Now.ToUnixTimeSeconds();
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user.SubscriptionEndDate is null)
+            {
+                return false;
+            }
+            
+            if (user.SubscriptionEndDate < DateTimeOffset.Now.ToUnixTimeSeconds())
+            {
+                try
+                {
+                    string resultString = string.Empty;
+                    using (var client = new WebClient())
+                    {
+                        client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                        string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
+                                      $" \"receipt-data\": \"{user.Receipt}\", \"exclude-old-transactions\": false}}";
+                        // TODO: Find a better way to JSON Serialization
+                        resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
+                    }
+
+                    dynamic result = JsonConvert.DeserializeObject(resultString);
+                    long lastDate = result.latest_receipt_info.Last.expires_date_ms;
+
+                    if (lastDate > user.SubscriptionEndDate)
+                    {
+                        user.SubscriptionEndDate = lastDate;
+                    }
+                    await _context.SaveChangesAsync();
+
+                    if (lastDate > DateTimeOffset.Now.ToUnixTimeSeconds())
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> IsAdminAsync(string email)

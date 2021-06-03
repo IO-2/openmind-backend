@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenMind.Contracts.Requests;
 using OpenMind.Contracts.Requests.Users;
 using OpenMind.Contracts.Responses.Users;
 using OpenMind.Domain;
@@ -150,17 +151,17 @@ namespace OpenMind.Controllers
         [HttpPost("send-receipt")]
         [MapToApiVersion("1.0")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> SendReceipt([FromBody] string receipt)
+        public async Task<IActionResult> SendReceipt([FromBody] VerifyReceiptRequest request)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _identityService.SendReceiptAsync(receipt, email);
+            var result = await _identityService.SendReceiptAsync(request.Receipt, email, request.Locale);
 
             if (!result.Success)
             {
                 return BadRequest(result.Errors);
             }
 
-            return Ok(true);
+            return Ok((result as UserInfoActionResult).User);
         }
 
         [HttpPost("login")]
