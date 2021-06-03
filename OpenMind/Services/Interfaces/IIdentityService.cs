@@ -17,6 +17,8 @@ namespace OpenMind.Services.Interfaces
         Task<ServiceActionResult> IsPasswordValidAsync(string password);
         Task<ServiceActionResult> GetAvatarAsync(string email);
         Task<ServiceActionResult> AddProgressAsync(string email, int sectionNumber, int progress);
+        Task<ServiceActionResult> SendReceiptAsync(string receipt, string email, string locale);
+        Task<bool> IsSubscribed(string email);
 
         Task<bool> IsAdminAsync(string email);
     }

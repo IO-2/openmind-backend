@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using OpenMind.Contracts.Responses.Users;
 using OpenMind.Data;
 using OpenMind.Domain;
@@ -31,6 +34,7 @@ namespace OpenMind.Services
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
 
         private readonly IValidator _emailValidator;
         private readonly IValidator _passwordValidator;
@@ -38,7 +42,7 @@ namespace OpenMind.Services
         protected override IList<string> AllowedFiles { get; set; } = new List<string>{ "image/jpeg", "image/png", "image/jpg" };
         protected override string ContentsFolderName { get; set; } = "Avatars";
 
-        public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment, IEmailValidator emailValidator, IPasswordValidator passwordValidator)
+        public IdentityService(UserManager<UserModel> userManager, JwtOptions jwtOptions, TokenValidationParameters tokenValidationParameters, DataContext context, IWebHostEnvironment environment, IEmailValidator emailValidator, IPasswordValidator passwordValidator, IConfiguration configuration)
         {
             this._userManager = userManager;
             this._jwtOptions = jwtOptions;
@@ -47,6 +51,7 @@ namespace OpenMind.Services
             this._environment = environment;
             this._emailValidator = emailValidator;
             this._passwordValidator = passwordValidator;
+            _configuration = configuration;
         }
 
         public async Task<ServiceActionResult> RegisterAsync(string email, string name, string password, string dreamingAbout, string inspirer, string whyInspired, ICollection<int> interests)
@@ -387,6 +392,82 @@ namespace OpenMind.Services
             await _context.SaveChangesAsync();
 
             return OkServiceActionResult();
+        }
+
+        public async Task<ServiceActionResult> SendReceiptAsync(string receipt, string email, string locale)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            string resultString = string.Empty;
+
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
+                                  $" \"receipt-data\": \"{receipt}\", \"exclude-old-transactions\": false}}";
+                    // TODO: Find a better way to JSON Serialization
+                    resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
+                }
+
+                dynamic result = JsonConvert.DeserializeObject(resultString);
+
+                user.Receipt = receipt;
+                user.SubscriptionEndDate = result.latest_receipt_info.Last.expires_date_ms;
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return BadServiceActionResult("Cannot get receipt info");
+            }
+
+            return await GetInfoAsync(email, locale);
+        }
+
+        public async Task<bool> IsSubscribed(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user.SubscriptionEndDate is null)
+            {
+                return false;
+            }
+            
+            if (user.SubscriptionEndDate < DateTimeOffset.Now.ToUnixTimeSeconds())
+            {
+                try
+                {
+                    string resultString = string.Empty;
+                    using (var client = new WebClient())
+                    {
+                        client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                        string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
+                                      $" \"receipt-data\": \"{user.Receipt}\", \"exclude-old-transactions\": false}}";
+                        // TODO: Find a better way to JSON Serialization
+                        resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
+                    }
+
+                    dynamic result = JsonConvert.DeserializeObject(resultString);
+                    long lastDate = result.latest_receipt_info.Last.expires_date_ms;
+
+                    if (lastDate > user.SubscriptionEndDate)
+                    {
+                        user.SubscriptionEndDate = lastDate;
+                    }
+                    await _context.SaveChangesAsync();
+
+                    if (lastDate > DateTimeOffset.Now.ToUnixTimeSeconds())
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> IsAdminAsync(string email)
