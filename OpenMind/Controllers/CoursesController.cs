@@ -181,7 +181,7 @@ namespace OpenMind.Controllers
         public async Task<IActionResult> GetCourseLessonsInfoPrivilege(int id, int lessonNumber)
         {
             string email = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!await _identityService.IsSubscribed(email))
+            if (!await _identityService.IsSubscribed(email) && !await _identityService.IsAdminAsync(email))
             {
                 return BadRequest("User is not subscribed");
             }
