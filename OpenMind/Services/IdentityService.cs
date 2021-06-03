@@ -11,6 +11,7 @@ using Castle.Core.Internal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -274,7 +275,7 @@ namespace OpenMind.Services
                     Email = user.Email,
                     DreamingAbout = user.DreamingAbout,
                     Inspirer = user.Inspirer,
-                    SubscriptionEndDate = user.SubscriptionEndDate,
+                    SubscriptionEndDate = await IsSubscribed(email) ? user.SubscriptionEndDate : null,
                     WhyInspired = user.WhyInspired,
                     Interests = user.Interests.Select(x => x.Interest).ToList(),
                     Successes = successes,
@@ -401,27 +402,49 @@ namespace OpenMind.Services
 
             try
             {
-                using (var client = new WebClient())
-                {
-                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                    string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
-                                  $" \"receipt-data\": \"{receipt}\", \"exclude-old-transactions\": false}}";
-                    // TODO: Find a better way to JSON Serialization
-                    resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
-                }
-
-                dynamic result = JsonConvert.DeserializeObject(resultString);
-
-                user.Receipt = receipt;
-                user.SubscriptionEndDate = result.latest_receipt_info.Last.expires_date_ms / 1000;
-                await _context.SaveChangesAsync();
+                long lastDate = await GetLastDate(receipt, email);
             }
             catch
             {
-                return BadServiceActionResult("Cannot get receipt info");
+                return BadServiceActionResult("Invalid status code");
             }
 
             return await GetInfoAsync(email, locale);
+        }
+
+        private async Task<long> GetLastDate(string? receipt, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            string resultString = string.Empty;
+            using (var client = new WebClient())
+            {
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
+                              $" \"receipt-data\": \"{user.Receipt}\", \"exclude-old-transactions\": false}}";
+                // TODO: Find a better way to JSON Serialization
+                resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
+            }
+
+            dynamic result = JsonConvert.DeserializeObject(resultString);
+            if (result.status != 0)
+            {
+                throw new Exception("Invalid status code");
+            }
+
+            long lastDate = 0;
+            try
+            {
+                lastDate = result.latest_receipt_info[0].expires_date_ms / 1000;
+                user.SubscriptionEndDate = lastDate;
+            }
+            catch
+            {
+                user.SubscriptionEndDate = 0;
+            }
+            user.Receipt = receipt ?? user.Receipt;
+            await _context.SaveChangesAsync();
+
+            return (long)user.SubscriptionEndDate;
         }
 
         public async Task<bool> IsSubscribed(string email)
@@ -431,38 +454,14 @@ namespace OpenMind.Services
             {
                 return false;
             }
-            
-            if (user.SubscriptionEndDate < DateTimeOffset.Now.ToUnixTimeSeconds())
+
+            if (user.SubscriptionEndDate < DateTimeOffset.Now.ToUnixTimeSeconds() && user.SubscriptionEndDate != 0)
             {
-                try
+                long lastDate = await GetLastDate(null, email);
+
+                if (lastDate > DateTimeOffset.Now.ToUnixTimeSeconds())
                 {
-                    string resultString = string.Empty;
-                    using (var client = new WebClient())
-                    {
-                        client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                        string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
-                                      $" \"receipt-data\": \"{user.Receipt}\", \"exclude-old-transactions\": false}}";
-                        // TODO: Find a better way to JSON Serialization
-                        resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
-                    }
-
-                    dynamic result = JsonConvert.DeserializeObject(resultString);
-                    long lastDate = result.latest_receipt_info.Last.expires_date_ms / 1000;
-
-                    if (lastDate > user.SubscriptionEndDate)
-                    {
-                        user.SubscriptionEndDate = lastDate;
-                    }
-                    await _context.SaveChangesAsync();
-
-                    if (lastDate > DateTimeOffset.Now.ToUnixTimeSeconds())
-                    {
-                        return true;
-                    }
-                }
-                catch
-                {
-                    return false;
+                    return true;
                 }
 
                 return false;
