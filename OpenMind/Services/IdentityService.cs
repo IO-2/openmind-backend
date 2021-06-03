@@ -413,7 +413,7 @@ namespace OpenMind.Services
                 dynamic result = JsonConvert.DeserializeObject(resultString);
 
                 user.Receipt = receipt;
-                user.SubscriptionEndDate = result.latest_receipt_info.Last.expires_date_ms;
+                user.SubscriptionEndDate = result.latest_receipt_info.Last.expires_date_ms / 1000;
                 await _context.SaveChangesAsync();
             }
             catch
@@ -447,7 +447,7 @@ namespace OpenMind.Services
                     }
 
                     dynamic result = JsonConvert.DeserializeObject(resultString);
-                    long lastDate = result.latest_receipt_info.Last.expires_date_ms;
+                    long lastDate = result.latest_receipt_info.Last.expires_date_ms / 1000;
 
                     if (lastDate > user.SubscriptionEndDate)
                     {
