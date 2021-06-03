@@ -420,7 +420,7 @@ namespace OpenMind.Services
             {
                 client.Headers[HttpRequestHeader.ContentType] = "application/json";
                 string data = $"{{\"password\": \"{_configuration["AppstorePassword"]}\"," +
-                              $" \"receipt-data\": \"{user.Receipt}\", \"exclude-old-transactions\": false}}";
+                              $" \"receipt-data\": \"{receipt ?? user.Receipt}\", \"exclude-old-transactions\": false}}";
                 // TODO: Find a better way to JSON Serialization
                 resultString = client.UploadString("https://sandbox.itunes.apple.com/verifyReceipt", data);
             }
