@@ -435,6 +435,13 @@ namespace OpenMind.Services
             try
             {
                 lastDate = result.latest_receipt_info[0].expires_date_ms / 1000;
+                foreach (dynamic purchase in result.receipt.in_app)
+                {
+                    if (purchase.product_id == "study.open.mind.forever")
+                    {
+                        lastDate = 0;
+                    }
+                }
                 user.SubscriptionEndDate = lastDate;
             }
             catch
