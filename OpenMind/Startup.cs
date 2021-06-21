@@ -64,9 +64,13 @@ namespace OpenMind
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGet("privacy-policy", async context =>
+                endpoints.MapGet("app/privacy-policy", async context =>
                 {
                     await context.Response.WriteAsync(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "privacy.html")));
+                });
+                endpoints.MapGet("app/terms-of-use", async context =>
+                {
+                    await context.Response.WriteAsync(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "terms-of-use.html")));
                 });
             });
         }
