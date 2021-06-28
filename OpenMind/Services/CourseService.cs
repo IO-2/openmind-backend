@@ -284,7 +284,7 @@ namespace OpenMind.Services
                         LessonNumber = x.LessonNumber,
                         Title = x.Title,
                         Description = x.Description
-                    }),
+                    }).OrderBy(x => x.LessonNumber),
                     CourseDuration = course.CourseDuration,
                     Description = course.Description,
                     LessonsDescription = course.LessonsDescription,
